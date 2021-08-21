@@ -1,0 +1,9 @@
+pub mod df;
+pub mod dig;
+pub mod docker;
+pub mod free;
+pub mod last;
+pub mod ls;
+pub mod nmap;
+pub mod nslookup;
+pub mod ping;

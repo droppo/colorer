@@ -1,0 +1,26 @@
+[package]
+name = "colorer"
+version = "0.1.0"
+authors = ["droppo"]
+edition = "2018"
+description = "Simple command line utility that add color to commands that do not have it by default."
+documentation = "https://github.com/droppo/colorer"
+repository = "https://github.com/droppo/colorer"
+homepage = "https://github.com/droppo/colorer"
+readme = "README.md"
+license = "MIT"
+keywords = ["cli", "parser", "terminal", "utility", "command"]
+categories = ["command-line-utilities"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "clrr"
+path = "src/main.rs"
+
+
+[dependencies]
+ctrlc = "3.1.9"
+nix = "0.22.0"
+onig = "6.2.0"
+pico-args = "0.4.2"
