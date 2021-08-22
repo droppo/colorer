@@ -63,7 +63,7 @@ impl Parser for Ping {
             // max
             ColorerRegex::new(r"max", decorate!(Decoration::GreenFgBright), None),
             // mdev
-            ColorerRegex::new(r"mdev", decorate!(Decoration::BlackFgBright), None),
+            ColorerRegex::new(r"mdev|stddev", decorate!(Decoration::BlackFgBright), None),
             // min value
             ColorerRegex::new(
                 r"(?<=(=\s))[0-9]+.[0-9]+",
@@ -228,6 +228,24 @@ From {green}192.168.0.117{reset} icmp_seq={yellow}3{reset} {red_bg}Destination H
         assert_eq!(
             correct_output,
             reader_handler(input, &init_parser("ping").unwrap())
+        );
+    }
+
+    #[test]
+    fn ping_stddev() {
+        let input = "round-trip min/avg/max/stddev = 23.568/27.439/29.741/2.754 ms";
+        let correct_output = format!(
+            "round-trip {blue}min{reset}/{magenta}avg{reset}/{green}max{reset}/{black}stddev{reset} = {blue}23.568{reset}/{magenta}27.439{reset}/{green}29.741{reset}/{black}2.754{reset} ms",
+            blue = decorate!(Decoration::BlueFgBright),
+            magenta = decorate!(Decoration::MagentaFgBright),
+            green = decorate!(Decoration::GreenFgBright),
+            black = decorate!(Decoration::BlackFgBright),
+            reset = decorate!(Decoration::Default)
+        );
+
+        assert_eq!(
+            correct_output,
+            reader_handler(input.to_string(), &init_parser("ping").unwrap())
         );
     }
 }
