@@ -113,7 +113,7 @@ dependencies = [
 
 [[package]]
 name = "colorer"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "ctrlc",
  "nix 0.22.0",
