@@ -9,7 +9,7 @@ use crate::{
 pub struct Env;
 
 impl Parser for Env {
-    fn regexs(&self) -> Vec<crate::parser::parser::ColorerRegex> {
+    fn regexs(&self) -> Vec<ColorerRegex> {
         vec![
             ColorerRegex::new(r"^\w+(?=\=)", decorate!(Decoration::YellowFgBright), None),
             ColorerRegex::new(r"(?<=\=).*", decorate!(Decoration::CyanFgBright), None),

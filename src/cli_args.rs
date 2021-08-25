@@ -9,8 +9,8 @@ colorer (clrr) - ",
 Colorer is a simple command line utility useful to add color to commands that do
 not have it by default.
 
-Supported commands: df, dig, docker, env, free, last, lastb, ls, nmap, nslookup,
-ping.
+Supported commands: df, dig, docker, env, free, last, lastb, ls, lsns, nmap,
+nslookup, ping.
 
 
 

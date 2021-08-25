@@ -10,9 +10,11 @@ Supported commands:
 - `df`
 - `dig`
 - `docker` (still WIP)
+- `env`
 - `free`
 - `last` and `lastb`
 - `ls`
+- `lsns`
 - `nmap`
 - `nslookup`
 - `ping`
@@ -28,10 +30,12 @@ Copy and paste the following block in you dotfile configuration.
 alias df="clrr df"
 alias dig="clrr dig"
 alias docker="clrr docker"
+alias env="clrr env"
 alias free="clrr free"
 alias last="clrr last"
 alias lastb="clrr lastb"
 alias ll="clrr ls -lahF"
+alias lsns="clrr lsns"
 alias nmap="clrr nmap"
 alias nslookup="clrr nslookup"
 alias ping="clrr ping"
