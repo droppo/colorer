@@ -4,12 +4,14 @@ use pico_args::Arguments;
 
 const HELP: (&str, &str) = (
     "\
-colorer - ",
+colorer (clrr) - ",
     "\n
 Colorer is a simple command line utility useful to add color to commands that do
 not have it by default.
 
-Supported commands: df, dig, docker, free, last, lastb, ls, nmap, nslookup, ping.
+Supported commands: df, dig, docker, env, free, last, lastb, ls, nmap, nslookup,
+ping.
+
 
 
 USAGE:
@@ -17,6 +19,7 @@ USAGE:
 
 FLAGS
     --help      Print this help.
+    --version   Print version information and exit.
 ",
 );
 
@@ -31,6 +34,11 @@ impl CliArgs {
 
         if args.contains("--help") {
             println!("{}{}{}", HELP.0, env!("CARGO_PKG_VERSION"), HELP.1);
+            exit(0);
+        }
+
+        if args.contains("--version") {
+            println!("colorer (clrr) {}", env!("CARGO_PKG_VERSION"));
             exit(0);
         }
 

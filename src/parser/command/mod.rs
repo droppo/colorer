@@ -1,6 +1,7 @@
 pub mod df;
 pub mod dig;
 pub mod docker;
+pub mod env;
 pub mod free;
 pub mod last;
 pub mod ls;

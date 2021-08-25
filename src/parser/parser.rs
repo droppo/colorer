@@ -4,7 +4,7 @@ use crate::decorate;
 
 use super::{
     command::{
-        df::Df, dig::Dig, docker::Docker, free::Free, last::Last, ls::Ls, nmap::Nmap,
+        df::Df, dig::Dig, docker::Docker, env::Env, free::Free, last::Last, ls::Ls, nmap::Nmap,
         nslookup::Nslookup, ping::Ping,
     },
     decorator::Decoration,
@@ -52,6 +52,7 @@ pub fn init_parser(command: &str) -> Option<Arc<dyn Parser + Sync + Send>> {
         "nslookup" => Some(Arc::new(Nslookup)),
         "dig" => Some(Arc::new(Dig)),
         "last" | "lastb" => Some(Arc::new(Last)),
+        "env" => Some(Arc::new(Env)),
         _ => None,
     }
 }

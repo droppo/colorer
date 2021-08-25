@@ -1,6 +1,6 @@
 [package]
 name = "colorer"
-version = "0.1.1"
+version = "0.2.1"
 authors = ["droppo"]
 edition = "2018"
 description = "Simple command line utility that add color to commands that do not have it by default."
