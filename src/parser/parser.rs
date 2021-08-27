@@ -4,8 +4,8 @@ use crate::decorate;
 
 use super::{
     command::{
-        df::Df, dig::Dig, docker::Docker, free::Free, last::Last, ls::Ls, nmap::Nmap,
-        nslookup::Nslookup, ping::Ping,
+        df::Df, dig::Dig, docker::Docker, env::Env, free::Free, last::Last, ls::Ls, lsns::Lsns,
+        nmap::Nmap, nslookup::Nslookup, ping::Ping,
     },
     decorator::Decoration,
 };
@@ -40,10 +40,10 @@ pub fn init_parser(command: &str) -> Option<Arc<dyn Parser + Sync + Send>> {
         "ping" => Some(Arc::new(Ping)),
         "nmap" => Some(Arc::new(Nmap)),
         "docker" => {
-            let subcommand = match env::args().collect::<Vec<String>>().get(2) {
-                Some(sub) => Some(sub.to_owned()),
-                None => None,
-            };
+            let subcommand = env::args()
+                .collect::<Vec<String>>()
+                .get(2)
+                .map(|sub| sub.to_owned());
             Some(Arc::new(Docker { subcommand }))
         }
         "df" => Some(Arc::new(Df)),
@@ -52,6 +52,8 @@ pub fn init_parser(command: &str) -> Option<Arc<dyn Parser + Sync + Send>> {
         "nslookup" => Some(Arc::new(Nslookup)),
         "dig" => Some(Arc::new(Dig)),
         "last" | "lastb" => Some(Arc::new(Last)),
+        "env" => Some(Arc::new(Env)),
+        "lsns" => Some(Arc::new(Lsns)),
         _ => None,
     }
 }
@@ -96,5 +98,5 @@ pub fn reader_handler(line: String, parser: &Arc<dyn Parser + Sync + Send>) -> S
         )
     });
 
-    format!("{}", colored_line)
+    colored_line
 }

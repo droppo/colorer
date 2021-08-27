@@ -31,7 +31,7 @@ fn run_colorer() {
                 // unwrap is considered secure here
                 .unwrap();
 
-            let child_pid = child.id().clone();
+            let child_pid = child.id();
             ctrlc::set_handler(move || {
                 kill(Pid::from_raw(child_pid.try_into().unwrap()), SIGINT).unwrap();
             })
