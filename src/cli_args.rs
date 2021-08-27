@@ -12,8 +12,6 @@ not have it by default.
 Supported commands: df, dig, docker, env, free, last, lastb, ls, lsns, nmap,
 nslookup, ping.
 
-
-
 USAGE:
     clrr [FLAGS] ...
 
@@ -42,10 +40,8 @@ impl CliArgs {
             exit(0);
         }
 
-        let cli_args = CliArgs {
+        CliArgs {
             args: args.finish(),
-        };
-
-        cli_args
+        }
     }
 }

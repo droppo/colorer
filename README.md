@@ -1,10 +1,10 @@
 # Colorer
 
-**Colorer** is a simple command line utility useful to add color to commands that do not have it by default. It works with Linux as well as MacOS.
+**Colorer** is a simple text parsing command line utility that provides color to commands that do not have it by default. It works with Linux as well as MacOS.
 
 ## Commands
 
-Not all commands are supported yet. If you implement a parser for a command or find an error please submit a merge request :).
+Not all commands are supported yet. If you implement a parser for a command or find an error please submit a pull request :).
 
 Supported commands:
 - `df`
