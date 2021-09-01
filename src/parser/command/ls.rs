@@ -15,7 +15,11 @@ impl Parser for Ls {
             // date
             // ColorerRegex::new(r"(\w{3}|\d{1,2})\s+(\w{3}|\d{1,2})\s+(\d{4}|\d{1,2}(\:|\.)\d{2})", decorate!(Decoration::Underlined), None),
             // root user
-            ColorerRegex::new(r"\broot\b", decorate!(Decoration::RedFgBright), None),
+            ColorerRegex::new(
+                r"(?<=\s)root(?=\s)",
+                decorate!(Decoration::RedFgBright),
+                None,
+            ),
             // size
             ColorerRegex::new(
                 r"\S+(?=(\s+(\w{3}|\d{1,2})\s+(\w{3}|\d{1,2})\s+(\d{4}|\d{1,2}[:.]\d{2})))",
