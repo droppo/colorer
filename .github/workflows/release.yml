@@ -23,9 +23,8 @@ jobs:
         - build: linux
           os: ubuntu-latest
           rust: stable
-          target: x86_64-unknown-linux-musl
+          target: x86_64-unknown-linux-gnu
           cross: false
-          cross: true
         - build: aarch64
           os: ubuntu-latest
           rust: stable
@@ -51,7 +50,7 @@ jobs:
         mkdir .cargo
         echo '[target.aarch64-unknown-linux-gnu]' >> .cargo/config
         echo 'linker = "aarch64-linux-gnu-gcc"' >> .cargo/config
-              
+
     - name: Install Rust
       run: |
         rustup install ${{ matrix.rust }}
