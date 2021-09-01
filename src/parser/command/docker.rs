@@ -46,13 +46,13 @@ impl Parser for Docker {
                         //     decorate!(Decoration::ReBg),
                         //     Some(vec![(r"\b(unhealthy)\b", decorate!(Decoration::ReBg))]),
                         // ),
-                        // itnernal ports
+                        // internal ports
                         ColorerRegex::new(
                             r#"(?<=(\s|>))\d+/\w+"#,
                             decorate!(Decoration::YellowFg),
                             None,
                         ),
-                        // esternal
+                        // external
                         ColorerRegex::new(
                             r#"((\d{1,3}.){3}\d{1,3}|::):\d+"#,
                             decorate!(Decoration::GreenFg),
@@ -62,6 +62,32 @@ impl Parser for Docker {
                         ColorerRegex::new(
                             r#"\S+[^NAMES\n]($|\n)"#,
                             decorate!(Decoration::CyanFg),
+                            None,
+                        ),
+                    ]
+                }
+                "search" => {
+                    vec![
+                        // name
+                        ColorerRegex::new(
+                            r"(^[^NAME]\w+(?=\s)|(?<=(^\w+\/))\S+)",
+                            decorate!(Decoration::YellowFgBright, Decoration::Bold),
+                            None,
+                        ),
+                        // Description
+                        // ColorerRegex::new(r"", decorate!(Decoration::CyanFgBright), None),
+                        // stars
+                        ColorerRegex::new(
+                            r"(?<=\s)\d+(?=\s)",
+                            decorate!(Decoration::GreenFgBright),
+                            None,
+                        ),
+                        // official/automate
+                        ColorerRegex::new(r"\[OK\]", decorate!(Decoration::GreenFgBright), None),
+                        // underline
+                        ColorerRegex::new(
+                            r"(?<=^[^NAME]\S+)\s+",
+                            decorate!(Decoration::BlackFgBright, Decoration::Underlined),
                             None,
                         ),
                     ]
@@ -93,17 +119,30 @@ mod tests {
 
     #[test]
     fn docker_ps() {
-        let input = r#"12c3dedd07be   kunde21/gitea-arm   "/usr/bin/entrypoint…"   5 weeks ago   Up 5 days  3000/tcp, 0.0.0.0:222->22/tcp, :::222->22/tcp   gitea"#.to_string();
+        let input = vec![
+            r#"12c3dedd07be   kunde21/gitea-arm   "/usr/bin/entrypoint…"   5 weeks ago   Up 5 days  3000/tcp, 0.0.0.0:222->22/tcp, :::222->22/tcp   gitea"#.to_string(),
+            r#"a26d8ced06fd   eclipse-mosquitto   "/docker-entrypoint.…"   5 hours ago   Restarting (13) 47 seconds ago   message-broker"#.to_string()
+        ];
 
-        let correct_output = format!(
-            r#"12c3dedd07be   {magenta}kunde21/gitea-arm{reset}   "/usr/bin/entrypoint…"   {blue}5 weeks ago{reset}   {green}Up 5 days{reset}  {yellow}3000/tcp{reset}, {green}0.0.0.0:222{reset}->{yellow}22/tcp{reset}, {green}:::222{reset}->{yellow}22/tcp{reset}   {cyan}gitea{reset}"#,
-            magenta = decorate!(Decoration::MagentaFg),
-            blue = decorate!(Decoration::BlueFg),
-            green = decorate!(Decoration::GreenFg),
-            yellow = decorate!(Decoration::YellowFg),
-            cyan = decorate!(Decoration::CyanFg),
-            reset = decorate!(Decoration::Default)
-        );
+        let correct_output = vec![
+            format!(
+                r#"12c3dedd07be   {magenta}kunde21/gitea-arm{reset}   "/usr/bin/entrypoint…"   {blue}5 weeks ago{reset}   {green}Up 5 days{reset}  {yellow}3000/tcp{reset}, {green}0.0.0.0:222{reset}->{yellow}22/tcp{reset}, {green}:::222{reset}->{yellow}22/tcp{reset}   {cyan}gitea{reset}"#,
+                magenta = decorate!(Decoration::MagentaFg),
+                blue = decorate!(Decoration::BlueFg),
+                green = decorate!(Decoration::GreenFg),
+                yellow = decorate!(Decoration::YellowFg),
+                cyan = decorate!(Decoration::CyanFg),
+                reset = decorate!(Decoration::Default)
+            ),
+            format!(
+                r#"a26d8ced06fd   {magenta}eclipse-mosquitto{default}   "/docker-entrypoint.…"   {blue}5 hours ago{default}   {red}Restarting (13) 47 seconds ago{default}   {cyan}message-broker{default}"#,
+                magenta = decorate!(Decoration::MagentaFg),
+                blue = decorate!(Decoration::BlueFg),
+                red = decorate!(Decoration::RedBg),
+                cyan = decorate!(Decoration::CyanFg),
+                default = decorate!(Decoration::Default)
+            ),
+        ];
 
         fn test_init() -> Arc<dyn Parser + Sync + Send> {
             Arc::new(Docker {
@@ -111,54 +150,68 @@ mod tests {
             })
         }
 
-        assert_eq!(correct_output, reader_handler(input, &test_init()));
+        for (index, line) in input.iter().enumerate() {
+            assert_eq!(
+                correct_output.get(index).unwrap(),
+                &reader_handler(line.to_string(), &test_init())
+            );
+        }
     }
 
-    // #[test]
-    // fn docker_ps_healthy() {
-    //     let input = r#"5fb8032dd734   vaultwarden/server:latest   "/usr/bin/dumb-init …"   5 weeks ago   Up 5 days (healthy)   80/tcp, 3012/tcp    vaultwarden"#.to_string();
+    #[test]
+    fn docker_search() {
+        let input = vec![
+            "NAME                                    DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED",
+            "postgres                                The PostgreSQL object-relational database sy…   9804                [OK]",
+            "sameersbn/postgresql                                                                    159                                     [OK]",
+            "paintedfox/postgresql                   A docker image for running Postgresql.          77                                      [OK]",
+            "centos/postgresql-96-centos7            PostgreSQL is an advanced Object-Relational …   45 "
+        ];
 
-    //     let correct_output = format!(
-    //         r#"5fb8032dd734   {magenta}vaultwarden/server:latest{reset}   "/usr/bin/dumb-init …"   {blue}5 weeks ago{reset}   {green}Up 5 days{reset} ({green_bg}healthy{reset})   {yellow}80/tcp{reset}, {yellow}3012/tcp{reset}    {cyan}vaultwarden{reset}"#,
-    //         magenta = decorate!(Decoration::MAGENTA_FG,
-    //         blue = decorate!(Decoration::BlueFg),
-    //         green = decorate!(Decoration::GreenFg),
-    //         green_bg = decorate!(Decoration::GREEN_BG,
-    //         yellow = decorate!(Decoration::YellowFg),
-    //         cyan = decorate!(Decoration::CyanFg),
-    //         reset = decorate!(Decoration::RESET
-    //     );
+        let correct_output = vec![
+            format!("NAME                                    DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED",),
+            format!("{yellow}{bold}postgres{default}{black}{underline}                                {default}The PostgreSQL object-relational database sy…   {green}9804{default}                {green}[OK]{default}",
+                    yellow = decorate!(Decoration::YellowFgBright),
+                    bold = decorate!(Decoration::Bold),
+                    black = decorate!(Decoration::BlackFgBright),
+                    underline = decorate!(Decoration::Underlined),
+                    green = decorate!(Decoration::GreenFgBright),
+                    default = decorate!(Decoration::Default)
+            ),
+            format!("sameersbn/{yellow}{bold}postgresql{default}{black}{underline}                                                                    {default}{green}159{default}                                     {green}[OK]{default}",
+                    yellow = decorate!(Decoration::YellowFgBright),
+                    bold = decorate!(Decoration::Bold),
+                    black = decorate!(Decoration::BlackFgBright),
+                    underline = decorate!(Decoration::Underlined),
+                    green = decorate!(Decoration::GreenFgBright),
+                    default = decorate!(Decoration::Default)),
+            format!("paintedfox/{yellow}{bold}postgresql{default}{black}{underline}                   {default}A docker image for running Postgresql.          {green}77{default}                                      {green}[OK]{default}",
+                    yellow = decorate!(Decoration::YellowFgBright),
+                    bold = decorate!(Decoration::Bold),
+                    black = decorate!(Decoration::BlackFgBright),
+                    underline = decorate!(Decoration::Underlined),
+                    green = decorate!(Decoration::GreenFgBright),
+                    default = decorate!(Decoration::Default)),
+            format!("centos/{yellow}{bold}postgresql-96-centos7{default}{black}{underline}            {default}PostgreSQL is an advanced Object-Relational …   {green}45{default} ",
+                    yellow = decorate!(Decoration::YellowFgBright),
+                    bold = decorate!(Decoration::Bold),
+                    black = decorate!(Decoration::BlackFgBright),
+                    underline = decorate!(Decoration::Underlined),
+                    green = decorate!(Decoration::GreenFgBright),
+                    default = decorate!(Decoration::Default))
+        ];
 
-    //     fn test_init() -> Box<dyn Parser> {
-    //         Box::new(Docker {
-    //             subcommand: Some("ps".to_owned()),
-    //         })
-    //     }
+        fn test_init() -> Arc<dyn Parser + Sync + Send> {
+            Arc::new(Docker {
+                subcommand: Some("search".to_owned()),
+            })
+        }
 
-    //     assert_eq!(correct_output, reader_handler(input, &test_init()));
-    // }
-
-    // #[test]
-    // fn docker_ps_unhealthy() {
-    //     let input = r#"5fb8032dd734   vaultwarden/server:latest   "/usr/bin/dumb-init …"   5 weeks ago   Up 5 days (unhealthy)   80/tcp, 3012/tcp    vaultwarden"#.to_string();
-
-    //     let correct_output = format!(
-    //         r#"5fb8032dd734   {magenta}vaultwarden/server:latest{reset}   "/usr/bin/dumb-init …"   {blue}5 weeks ago{reset}   {green}Up 5 days{reset} ({ReBg)}unhealthy{reset})   {yellow}80/tcp{reset}, {yellow}3012/tcp{reset}    {cyan}vaultwarden{reset}"#,
-    //         magenta = decorate!(Decoration::MAGENTA_FG,
-    //         blue = decorate!(Decoration::BlueFg),
-    //         green = decorate!(Decoration::GreenFg),
-    //         ReBg) = decorate!(Decoration::ReBg),
-    //         yellow = decorate!(Decoration::YellowFg),
-    //         cyan = decorate!(Decoration::CyanFg),
-    //         reset = decorate!(Decoration::RESET
-    //     );
-
-    //     fn test_init() -> Box<dyn Parser> {
-    //         Box::new(Docker {
-    //             subcommand: Some("ps".to_owned()),
-    //         })
-    //     }
-
-    //     assert_eq!(correct_output, reader_handler(input, &test_init()));
-    // }
+        for (index, line) in input.iter().enumerate() {
+            assert_eq!(
+                correct_output.get(index).unwrap(),
+                &reader_handler(line.to_string(), &test_init())
+            );
+        }
+    }
 }
