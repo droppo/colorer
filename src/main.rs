@@ -8,7 +8,6 @@ use std::{
 
 use cli_args::CliArgs;
 use nix::{
-    libc::exit,
     sys::signal::{kill, Signal::SIGINT},
     unistd::Pid,
 };
@@ -21,7 +20,7 @@ fn run_colorer() {
     if let Some(command) = args.get(1) {
         let mut arguments = vec![];
         args.iter().skip(2).for_each(|arg| arguments.push(arg));
-        if let Some(p) = parser::parser::init_parser(command) {
+        if let Some(p) = parser::parser::init_parser(command, &args) {
             let child = match Command::new(command)
                 .args(&arguments)
                 .stdout(Stdio::piped())
@@ -87,17 +86,14 @@ fn run_colorer() {
                 process::exit(1);
             }
         } else {
-            match Command::new(command).args(&arguments).spawn() {
-                Ok(mut r) => {
-                    if r.wait().is_err() {
-                        eprintln!("clrr: failed to wait");
-                    }
+            if let Ok(mut r) = Command::new(command).args(&arguments).spawn() {
+                if r.wait().is_err() {
+                    eprintln!("clrr: failed to wait");
                 }
-                Err(_) => {
-                    eprintln!("clrr: failed to run {}", command);
-                    process::exit(1);
-                }
-            };
+            } else {
+                eprintln!("clrr: failed to run {}", command);
+                process::exit(1);
+            }
         }
     } else {
         eprintln!("failed to start colorer: at least one argument is required");

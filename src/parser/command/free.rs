@@ -91,9 +91,10 @@ Swap:          15Gi          0B        15Gi
                                      reset = decorate!(Decoration::Default)
         );
 
+        let args: Vec<String> = vec![];
         assert_eq!(
             correct_output,
-            reader_handler(input, &init_parser("free").unwrap())
+            reader_handler(input, &init_parser("free", &args).unwrap())
         );
     }
 
@@ -117,9 +118,10 @@ Swap:      16645116    16645116           0
                                      reset = decorate!(Decoration::Default),
         );
 
+        let args: Vec<String> = vec![];
         assert_eq!(
             correct_output,
-            reader_handler(input, &init_parser("free").unwrap())
+            reader_handler(input, &init_parser("free", &args).unwrap())
         );
     }
 }

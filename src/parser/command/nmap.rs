@@ -91,9 +91,10 @@ PORT     STATE SERVICE  VERSION
                     purple = decorate!(Decoration::MagentaFgBright)
             );
 
+        let args: Vec<String> = vec![];
         assert_eq!(
             correct_output,
-            reader_handler(input, &init_parser("nmap").unwrap())
+            reader_handler(input, &init_parser("nmap", &args).unwrap())
         );
     }
 
@@ -114,9 +115,10 @@ Nmap done: 1 IP address (0 hosts up) scanned in 3.03 seconds
             reset = decorate!(Decoration::Default)
         );
 
+        let args: Vec<String> = vec![];
         assert_eq!(
             correct_output,
-            reader_handler(input, &init_parser("nmap").unwrap())
+            reader_handler(input, &init_parser("nmap", &args).unwrap())
         );
     }
 }

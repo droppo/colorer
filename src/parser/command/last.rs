@@ -113,10 +113,11 @@ mod tests {
             ),
         ];
 
+        let args: Vec<String> = vec![];
         for (index, line) in input.iter().enumerate() {
             assert_eq!(
                 correct_output.get(index).unwrap(),
-                &reader_handler(line.to_string(), &init_parser("last").unwrap())
+                &reader_handler(line.to_string(), &init_parser("last", &args).unwrap())
             );
         }
     }

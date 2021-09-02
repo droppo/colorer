@@ -240,10 +240,11 @@ mod tests {
             )
         ];
 
+        let args = vec!["clrr".to_string(), "ls".to_string(), "-l".to_string()];
         for (index, line) in input.iter().enumerate() {
             assert_eq!(
                 correct_output.get(index).unwrap(),
-                &reader_handler(line.to_string(), &init_parser("ls").unwrap())
+                &reader_handler(line.to_string(), &init_parser("ls", &args).unwrap())
             );
         }
     }

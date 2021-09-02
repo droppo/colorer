@@ -65,10 +65,11 @@ mod tests {
                 cyan = decorate!(Decoration::CyanFgBright), default = decorate!(Decoration::Default))
         ];
 
+        let args: Vec<String> = vec![];
         for (index, line) in input.iter().enumerate() {
             assert_eq!(
                 correct_output.get(index).unwrap(),
-                &reader_handler(line.to_string(), &init_parser("lsns").unwrap())
+                &reader_handler(line.to_string(), &init_parser("lsns", &args).unwrap())
             )
         }
     }

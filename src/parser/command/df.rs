@@ -107,7 +107,10 @@ mod tests {
         for (index, line) in input.iter().enumerate() {
             assert_eq!(
                 correct_output.get(index).unwrap(),
-                &reader_handler(line.to_string(), &init_parser("df").unwrap())
+                &reader_handler(
+                    line.to_string(),
+                    &init_parser("df", &vec!["".to_string()]).unwrap()
+                )
             );
         }
     }
@@ -178,10 +181,11 @@ mod tests {
             )
         ];
 
+        let args: Vec<String> = vec![];
         for (index, line) in input.iter().enumerate() {
             assert_eq!(
                 correct_output.get(index).unwrap(),
-                &reader_handler(line.to_string(), &init_parser("df").unwrap())
+                &reader_handler(line.to_string(), &init_parser("df", &args).unwrap())
             );
         }
     }

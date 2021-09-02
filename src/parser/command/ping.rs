@@ -142,9 +142,10 @@ rtt {blue}min{reset}/{magenta}avg{reset}/{green}max{reset}/{black}mdev{reset} = 
                     black = decorate!(Decoration::BlackFgBright),
             );
 
+        let args: Vec<String> = vec![];
         assert_eq!(
             correct_output,
-            reader_handler(input, &init_parser("ping").unwrap())
+            reader_handler(input, &init_parser("ping", &args).unwrap())
         );
     }
 
@@ -178,9 +179,10 @@ rtt {blue}min{reset}/{magenta}avg{reset}/{green}max{reset}/{black}mdev{reset} = 
                     cyan = decorate!(Decoration::CyanFgBright)
             );
 
+        let args: Vec<String> = vec![];
         assert_eq!(
             correct_output,
-            reader_handler(input, &init_parser("ping").unwrap())
+            reader_handler(input, &init_parser("ping", &args).unwrap())
         );
     }
 
@@ -210,9 +212,10 @@ From {green}192.168.0.117{reset} icmp_seq={yellow}3{reset} {red_bg}Destination H
                     magenta = decorate!(Decoration::MagentaFgBright),
             );
 
+        let args: Vec<String> = vec![];
         assert_eq!(
             correct_output,
-            reader_handler(input, &init_parser("ping").unwrap())
+            reader_handler(input, &init_parser("ping", &args).unwrap())
         )
     }
 
@@ -225,9 +228,10 @@ From {green}192.168.0.117{reset} icmp_seq={yellow}3{reset} {red_bg}Destination H
             reset = decorate!(Decoration::Default)
         );
 
+        let args: Vec<String> = vec![];
         assert_eq!(
             correct_output,
-            reader_handler(input, &init_parser("ping").unwrap())
+            reader_handler(input, &init_parser("ping", &args).unwrap())
         );
     }
 
@@ -243,9 +247,10 @@ From {green}192.168.0.117{reset} icmp_seq={yellow}3{reset} {red_bg}Destination H
             reset = decorate!(Decoration::Default)
         );
 
+        let args: Vec<String> = vec![];
         assert_eq!(
             correct_output,
-            reader_handler(input.to_string(), &init_parser("ping").unwrap())
+            reader_handler(input.to_string(), &init_parser("ping", &args).unwrap())
         );
     }
 }
