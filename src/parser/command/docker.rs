@@ -80,24 +80,32 @@ impl Parser for Docker {
                         ColorerRegex::new(
                             r"(?<=\s)\d+(?=\s)",
                             decorate!(Decoration::GreenFgBright),
-                            None,
+                            Some(vec![
+                                (r"\d{1}", decorate!(Decoration::MagentaFgBright)),
+                                (r"\d{2}", decorate!(Decoration::YellowFgBright)),
+                                (r"\d{3,}", decorate!(Decoration::GreenFgBright)),
+                            ]),
                         ),
                         // official/automate
-                        ColorerRegex::new(r"\[OK\]", decorate!(Decoration::GreenFgBright), None),
+                        ColorerRegex::new(
+                            r"(?<=\[)OK(?=\])",
+                            decorate!(Decoration::GreenFgBright),
+                            None,
+                        ),
                         // underline
                         ColorerRegex::new(
-                            r"(?<=^[^NAME]\S+)\s+",
+                            r"(?<=^[^NAME]\S+\s)\s+(?=\s)",
                             decorate!(Decoration::BlackFgBright, Decoration::Underlined),
                             None,
                         ),
                     ]
                 }
                 _ => {
-                    vec![ColorerRegex::new("", decorate!(Decoration::Default), None)]
+                    vec![]
                 }
             }
         } else {
-            vec![ColorerRegex::new("", decorate!(Decoration::Default), None)]
+            vec![]
         };
 
         regex_vector
@@ -162,15 +170,16 @@ mod tests {
     fn docker_search() {
         let input = vec![
             "NAME                                    DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED",
-            "postgres                                The PostgreSQL object-relational database sy…   9804                [OK]",
-            "sameersbn/postgresql                                                                    159                                     [OK]",
-            "paintedfox/postgresql                   A docker image for running Postgresql.          77                                      [OK]",
-            "centos/postgresql-96-centos7            PostgreSQL is an advanced Object-Relational …   45 "
+            "postgres                                 The PostgreSQL object-relational database sy…   9804                [OK]",
+            "sameersbn/postgresql                                                                      159                                     [OK]",
+            "paintedfox/postgresql                     A docker image for running Postgresql.          77                                      [OK]",
+            "centos/postgresql-96-centos7              PostgreSQL is an advanced Object-Relational …   45 ",
+            "centos/postgresql-95-centos7              PostgreSQL is an advanced Object-Relational …   6  "
         ];
 
         let correct_output = vec![
             format!("NAME                                    DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED",),
-            format!("{yellow}{bold}postgres{default}{black}{underline}                                {default}The PostgreSQL object-relational database sy…   {green}9804{default}                {green}[OK]{default}",
+            format!("{yellow}{bold}postgres{default} {black}{underline}                               {default} The PostgreSQL object-relational database sy…   {green}9804{default}                [{green}OK{default}]",
                     yellow = decorate!(Decoration::YellowFgBright),
                     bold = decorate!(Decoration::Bold),
                     black = decorate!(Decoration::BlackFgBright),
@@ -178,27 +187,33 @@ mod tests {
                     green = decorate!(Decoration::GreenFgBright),
                     default = decorate!(Decoration::Default)
             ),
-            format!("sameersbn/{yellow}{bold}postgresql{default}{black}{underline}                                                                    {default}{green}159{default}                                     {green}[OK]{default}",
+            format!("sameersbn/{yellow}{bold}postgresql{default} {black}{underline}                                                                    {default} {green}159{default}                                     [{green}OK{default}]",
                     yellow = decorate!(Decoration::YellowFgBright),
                     bold = decorate!(Decoration::Bold),
                     black = decorate!(Decoration::BlackFgBright),
                     underline = decorate!(Decoration::Underlined),
                     green = decorate!(Decoration::GreenFgBright),
                     default = decorate!(Decoration::Default)),
-            format!("paintedfox/{yellow}{bold}postgresql{default}{black}{underline}                   {default}A docker image for running Postgresql.          {green}77{default}                                      {green}[OK]{default}",
+            format!("paintedfox/{yellow}{bold}postgresql{default} {black}{underline}                   {default} A docker image for running Postgresql.          {yellow}77{default}                                      [{green}OK{default}]",
                     yellow = decorate!(Decoration::YellowFgBright),
                     bold = decorate!(Decoration::Bold),
                     black = decorate!(Decoration::BlackFgBright),
                     underline = decorate!(Decoration::Underlined),
                     green = decorate!(Decoration::GreenFgBright),
                     default = decorate!(Decoration::Default)),
-            format!("centos/{yellow}{bold}postgresql-96-centos7{default}{black}{underline}            {default}PostgreSQL is an advanced Object-Relational …   {green}45{default} ",
+            format!("centos/{yellow}{bold}postgresql-96-centos7{default} {black}{underline}            {default} PostgreSQL is an advanced Object-Relational …   {yellow}45{default} ",
                     yellow = decorate!(Decoration::YellowFgBright),
                     bold = decorate!(Decoration::Bold),
                     black = decorate!(Decoration::BlackFgBright),
                     underline = decorate!(Decoration::Underlined),
-                    green = decorate!(Decoration::GreenFgBright),
-                    default = decorate!(Decoration::Default))
+                    default = decorate!(Decoration::Default)),
+            format!("centos/{yellow}{bold}postgresql-95-centos7{default} {black}{underline}            {default} PostgreSQL is an advanced Object-Relational …   {magenta}6{default}  ",
+                    yellow = decorate!(Decoration::YellowFgBright),
+                    bold = decorate!(Decoration::Bold),
+                    black = decorate!(Decoration::BlackFgBright),
+                    underline = decorate!(Decoration::Underlined),
+                    magenta = decorate!(Decoration::MagentaFgBright),
+                    default = decorate!(Decoration::Default)),
         ];
 
         fn test_init() -> Arc<dyn Parser + Sync + Send> {
