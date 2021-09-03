@@ -1,15 +1,15 @@
 use crate::{
-    decorate,
-    parser::{
+    core::{
         decorator::Decoration,
         parser::{ColorerRegex, Parser},
     },
+    decorate,
 };
 
 pub struct Dig;
 
 impl Parser for Dig {
-    fn regexs(&self) -> Vec<crate::parser::parser::ColorerRegex> {
+    fn regexs(&self) -> Vec<crate::core::parser::ColorerRegex> {
         vec![
             // comment
             ColorerRegex::new(r"^;.*", decorate!(Decoration::BlackFgBright), None),
@@ -38,11 +38,11 @@ impl Parser for Dig {
 #[cfg(test)]
 mod tests {
     use crate::{
-        decorate,
-        parser::{
+        core::{
             decorator::Decoration,
             parser::{init_parser, reader_handler},
         },
+        decorate,
     };
 
     #[test]

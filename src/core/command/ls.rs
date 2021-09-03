@@ -1,9 +1,9 @@
 use crate::{
-    decorate,
-    parser::{
+    core::{
         decorator::Decoration,
         parser::{ColorerRegex, Parser},
     },
+    decorate,
 };
 
 pub struct Ls;
@@ -81,7 +81,7 @@ impl Parser for Ls {
 
 #[cfg(test)]
 mod tests {
-    use crate::parser::parser::{init_parser, reader_handler};
+    use crate::core::parser::{init_parser, reader_handler};
 
     use super::*;
 

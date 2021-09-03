@@ -13,14 +13,14 @@ use nix::{
 };
 
 mod cli_args;
-mod parser;
+mod core;
 
 fn run_colorer() {
     let args: Vec<String> = env::args().collect();
     if let Some(command) = args.get(1) {
         let mut arguments = vec![];
         args.iter().skip(2).for_each(|arg| arguments.push(arg));
-        if let Some(p) = parser::parser::init_parser(command, &args) {
+        if let Some(p) = core::parser::init_parser(command, &args) {
             let child = match Command::new(command)
                 .args(&arguments)
                 .stdout(Stdio::piped())
@@ -68,7 +68,7 @@ fn run_colorer() {
                     .lines()
                     .filter_map(|line| line.ok())
                     .for_each(|line| {
-                        println!("{}", parser::parser::reader_handler(line, &p_out));
+                        println!("{}", core::parser::reader_handler(line, &p_out));
                     });
             });
 
@@ -77,7 +77,7 @@ fn run_colorer() {
                     .lines()
                     .filter_map(|line| line.ok())
                     .for_each(|line| {
-                        eprintln!("{}", parser::parser::reader_handler(line, &p_err));
+                        eprintln!("{}", core::parser::reader_handler(line, &p_err));
                     });
             });
 
@@ -85,15 +85,13 @@ fn run_colorer() {
                 eprintln!("clrr: can't join thread");
                 process::exit(1);
             }
-        } else {
-            if let Ok(mut r) = Command::new(command).args(&arguments).spawn() {
-                if r.wait().is_err() {
-                    eprintln!("clrr: failed to wait");
-                }
-            } else {
-                eprintln!("clrr: failed to run {}", command);
-                process::exit(1);
+        } else if let Ok(mut r) = Command::new(command).args(&arguments).spawn() {
+            if r.wait().is_err() {
+                eprintln!("clrr: failed to wait");
             }
+        } else {
+            eprintln!("clrr: failed to run {}", command);
+            process::exit(1);
         }
     } else {
         eprintln!("failed to start colorer: at least one argument is required");

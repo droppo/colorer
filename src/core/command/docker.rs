@@ -1,9 +1,9 @@
 use crate::{
-    decorate,
-    parser::{
+    core::{
         decorator::Decoration,
         parser::{ColorerRegex, Parser},
     },
+    decorate,
 };
 
 #[derive(Debug)]
@@ -12,7 +12,7 @@ pub struct Docker {
 }
 
 impl Parser for Docker {
-    fn regexs(&self) -> Vec<crate::parser::parser::ColorerRegex> {
+    fn regexs(&self) -> Vec<crate::core::parser::ColorerRegex> {
         // let args: Vec<OsString> = CliArgs::parse_args().args;
         let regex_vector = if let Some(subcommand) = &self.subcommand {
             match subcommand.as_str() {
@@ -117,12 +117,12 @@ mod tests {
     use std::sync::Arc;
 
     use crate::{
-        decorate,
-        parser::{
+        core::{
             command::docker::Docker,
             decorator::Decoration,
             parser::{reader_handler, Parser},
         },
+        decorate,
     };
 
     #[test]

@@ -1,4 +1,4 @@
-use std::{env, sync::Arc};
+use std::sync::Arc;
 
 use crate::decorate;
 
@@ -35,7 +35,7 @@ pub trait Parser: Sync + Send {
     fn regexs(&self) -> Vec<ColorerRegex>;
 }
 
-pub fn init_parser(command: &str, args: &Vec<String>) -> Option<Arc<dyn Parser + Sync + Send>> {
+pub fn init_parser(command: &str, args: &[String]) -> Option<Arc<dyn Parser + Sync + Send>> {
     match command {
         "ping" => Some(Arc::new(Ping)),
         "nmap" => Some(Arc::new(Nmap)),
@@ -49,7 +49,7 @@ pub fn init_parser(command: &str, args: &Vec<String>) -> Option<Arc<dyn Parser +
             // check if `-l` is present
             let mut has_l = false;
             for arg in args {
-                if arg.starts_with("-") && arg.contains("l") {
+                if arg.starts_with('-') && arg.contains('l') {
                     has_l = true;
                     break;
                 }
