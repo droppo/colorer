@@ -21,22 +21,22 @@ impl Parser for Docker {
                         // image
                         ColorerRegex::new(
                             r#"(?<=(^(\S+)\s+))(\S+){3,}"#,
-                            decorate!(Decoration::MagentaFg),
+                            decorate!(Decoration::MagentaFgBright),
                             None,
                         ),
                         // created
                         ColorerRegex::new(
                             r#"(?<=(^\S+\s+\S+\s+\".*\"\s+))(\d|\w+\s\w+|\d+)(\s\w+){1,3}"#,
-                            decorate!(Decoration::BlueFg),
+                            decorate!(Decoration::BlueFgBright),
                             None,
                         ),
                         // status
                         ColorerRegex::new(
                             r#"(\w+\s\d+\s\w+|\w+\s\(\d+\)\s\d+(\s\w+){2})"#,
-                            decorate!(Decoration::GreenFg),
+                            decorate!(Decoration::GreenFgBright),
                             Some(vec![(
                                 r#"\w+\s\(\d+\)\s\d+\s\w+\s\w+"#,
-                                decorate!(Decoration::RedBg),
+                                decorate!(Decoration::RedBgBright),
                             )]),
                         ),
                         // named status e.g. healthy, unhealthy
@@ -49,19 +49,19 @@ impl Parser for Docker {
                         // internal ports
                         ColorerRegex::new(
                             r#"(?<=(\s|>))\d+/\w+"#,
-                            decorate!(Decoration::YellowFg),
+                            decorate!(Decoration::YellowFgBright),
                             None,
                         ),
                         // external
                         ColorerRegex::new(
                             r#"((\d{1,3}.){3}\d{1,3}|::):\d+"#,
-                            decorate!(Decoration::GreenFg),
+                            decorate!(Decoration::GreenFgBright),
                             None,
                         ),
                         // name
                         ColorerRegex::new(
                             r#"\S+[^NAMES\n]($|\n)"#,
-                            decorate!(Decoration::CyanFg),
+                            decorate!(Decoration::CyanFgBright),
                             None,
                         ),
                     ]
@@ -100,6 +100,26 @@ impl Parser for Docker {
                         ),
                     ]
                 }
+                "network" => {
+                    vec![
+                        // name
+                        ColorerRegex::new(
+                            r"(?<=(^[^NAME]\S+\s+))\S+",
+                            decorate!(Decoration::MagentaFgBright),
+                            Some(vec![(r"none", decorate!(Decoration::BlackFgBright))]),
+                        ),
+                        // driver
+                        ColorerRegex::new(
+                            r"(?<=(^[^NAME](\S+\s+){2}))\S+",
+                            decorate!(Decoration::CyanFgBright),
+                            Some(vec![
+                                (r"host", decorate!(Decoration::CyanFgBright)),
+                                (r"bridge", decorate!(Decoration::BlueFgBright)),
+                                (r"null", decorate!(Decoration::BlackFgBright)),
+                            ]),
+                        ),
+                    ]
+                }
                 _ => {
                     vec![]
                 }
@@ -135,19 +155,19 @@ mod tests {
         let correct_output = vec![
             format!(
                 r#"12c3dedd07be   {magenta}kunde21/gitea-arm{reset}   "/usr/bin/entrypoint…"   {blue}5 weeks ago{reset}   {green}Up 5 days{reset}  {yellow}3000/tcp{reset}, {green}0.0.0.0:222{reset}->{yellow}22/tcp{reset}, {green}:::222{reset}->{yellow}22/tcp{reset}   {cyan}gitea{reset}"#,
-                magenta = decorate!(Decoration::MagentaFg),
-                blue = decorate!(Decoration::BlueFg),
-                green = decorate!(Decoration::GreenFg),
-                yellow = decorate!(Decoration::YellowFg),
-                cyan = decorate!(Decoration::CyanFg),
+                magenta = decorate!(Decoration::MagentaFgBright),
+                blue = decorate!(Decoration::BlueFgBright),
+                green = decorate!(Decoration::GreenFgBright),
+                yellow = decorate!(Decoration::YellowFgBright),
+                cyan = decorate!(Decoration::CyanFgBright),
                 reset = decorate!(Decoration::Default)
             ),
             format!(
                 r#"a26d8ced06fd   {magenta}eclipse-mosquitto{default}   "/docker-entrypoint.…"   {blue}5 hours ago{default}   {red}Restarting (13) 47 seconds ago{default}   {cyan}message-broker{default}"#,
-                magenta = decorate!(Decoration::MagentaFg),
-                blue = decorate!(Decoration::BlueFg),
-                red = decorate!(Decoration::RedBg),
-                cyan = decorate!(Decoration::CyanFg),
+                magenta = decorate!(Decoration::MagentaFgBright),
+                blue = decorate!(Decoration::BlueFgBright),
+                red = decorate!(Decoration::RedBgBright),
+                cyan = decorate!(Decoration::CyanFgBright),
                 default = decorate!(Decoration::Default)
             ),
         ];
@@ -219,6 +239,38 @@ mod tests {
         fn test_init() -> Arc<dyn Parser + Sync + Send> {
             Arc::new(Docker {
                 subcommand: Some("search".to_owned()),
+            })
+        }
+
+        for (index, line) in input.iter().enumerate() {
+            assert_eq!(
+                correct_output.get(index).unwrap(),
+                &reader_handler(line.to_string(), &test_init())
+            );
+        }
+    }
+
+    #[test]
+    fn docker_network() {
+        let input = vec![
+            "NETWORK ID     NAME                      DRIVER    SCOPE",
+            "ee17b8ac62ab   bridge                    bridge    local",
+            "c31b98b076a0   host                      host      local",
+            "9aa4c404d9dc   none                      null      local",
+            "0cb5c7d7e926   broker-test_default       bridge    local",
+        ];
+
+        let correct_output = vec![
+            format!("NETWORK ID     NAME                      DRIVER    SCOPE"),
+            format!("ee17b8ac62ab   {magenta}bridge{default}                    {blue}bridge{default}    local", magenta = decorate!(Decoration::MagentaFgBright), default = decorate!(Decoration::Default), blue = decorate!(Decoration::BlueFgBright)),
+            format!("c31b98b076a0   {magenta}host{default}                      {cyan}host{default}      local", magenta = decorate!(Decoration::MagentaFgBright), default = decorate!(Decoration::Default), cyan = decorate!(Decoration::CyanFgBright)),
+            format!("9aa4c404d9dc   {black}none{default}                      {black}null{default}      local", default = decorate!(Decoration::Default), black = decorate!(Decoration::BlackFgBright)),
+            format!("0cb5c7d7e926   {magenta}broker-test_default{default}       {blue}bridge{default}    local", magenta = decorate!(Decoration::MagentaFgBright), default = decorate!(Decoration::Default), blue = decorate!(Decoration::BlueFgBright)),
+        ];
+
+        fn test_init() -> Arc<dyn Parser + Sync + Send> {
+            Arc::new(Docker {
+                subcommand: Some("network".to_owned()),
             })
         }
 
