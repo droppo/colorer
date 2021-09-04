@@ -10,7 +10,7 @@
 By using colorer it is possible to add color to the following commands:
 - `df`
 - `dig`
-- `docker` (still WIP)
+- `docker`
 - `env`
 - `free`
 - `last` and `lastb`
