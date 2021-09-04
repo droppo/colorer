@@ -1,15 +1,15 @@
 use crate::{
-    decorate,
-    parser::{
+    core::{
         decorator::Decoration,
         parser::{ColorerRegex, Parser},
     },
+    decorate,
 };
 
 pub struct Nslookup;
 
 impl Parser for Nslookup {
-    fn regexs(&self) -> Vec<crate::parser::parser::ColorerRegex> {
+    fn regexs(&self) -> Vec<crate::core::parser::ColorerRegex> {
         vec![
             // values
             ColorerRegex::new(
@@ -52,11 +52,11 @@ impl Parser for Nslookup {
 #[cfg(test)]
 mod tests {
     use crate::{
-        decorate,
-        parser::{
+        core::{
             decorator::Decoration,
             parser::{init_parser, reader_handler},
         },
+        decorate,
     };
 
     #[test]
@@ -139,10 +139,11 @@ mod tests {
             )
         ];
 
+        let args: Vec<String> = vec![];
         for (index, line) in input.iter().enumerate() {
             assert_eq!(
                 correct_output.get(index).unwrap(),
-                &reader_handler(line.to_string(), &init_parser("nslookup").unwrap())
+                &reader_handler(line.to_string(), &init_parser("nslookup", &args).unwrap())
             );
         }
     }

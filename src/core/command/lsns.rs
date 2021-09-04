@@ -1,9 +1,9 @@
 use crate::{
-    decorate,
-    parser::{
+    core::{
         decorator::Decoration,
         parser::{ColorerRegex, Parser},
     },
+    decorate,
 };
 
 pub struct Lsns;
@@ -34,11 +34,11 @@ impl Parser for Lsns {
 #[cfg(test)]
 mod tests {
     use crate::{
-        decorate,
-        parser::{
+        core::{
             decorator::Decoration,
             parser::{init_parser, reader_handler},
         },
+        decorate,
     };
 
     #[test]
@@ -65,10 +65,11 @@ mod tests {
                 cyan = decorate!(Decoration::CyanFgBright), default = decorate!(Decoration::Default))
         ];
 
+        let args: Vec<String> = vec![];
         for (index, line) in input.iter().enumerate() {
             assert_eq!(
                 correct_output.get(index).unwrap(),
-                &reader_handler(line.to_string(), &init_parser("lsns").unwrap())
+                &reader_handler(line.to_string(), &init_parser("lsns", &args).unwrap())
             )
         }
     }

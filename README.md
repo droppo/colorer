@@ -1,15 +1,16 @@
 # Colorer
 
-**Colorer** is a simple text parsing command line utility that provides color to commands that do not have it by default. It works with Linux as well as MacOS.
+**Colorer** is a simple text parsing command line utility that provides color to commands that do not have it by default. Tested on Linux and MacOS.
+
+![Crates.io](https://img.shields.io/crates/v/colorer)
+![GitHub last commit](https://img.shields.io/github/last-commit/droppo/colorer)
 
 ## Commands
 
-Not all commands are supported yet. If you implement a parser for a command or find an error please submit a pull request :).
-
-Supported commands:
+By using colorer it is possible to add color to the following commands:
 - `df`
 - `dig`
-- `docker` (still WIP)
+- `docker`
 - `env`
 - `free`
 - `last` and `lastb`
@@ -19,14 +20,29 @@ Supported commands:
 - `nslookup`
 - `ping`
 
+Notice that pull request are welcome :).
 
-## Note on aliases
-While most commands can be easily aliased, some may misbehave. An example is given by `ls`, which is implemented by taking into account the `-l` (list) flag.
+## Installation
 
-## Configuration
-Copy and paste the following block in you dotfile configuration.
+The most simple way is to install colorer is to download the program from the release page and put it in your path.
 
-``` text
+Another way is to use `cargo`:
+
+``` bash
+cargo install colorer
+```
+
+## Usage
+
+In order to add color to a command, it should be executed through colorer, for example:
+
+``` bash
+clrr ls -la
+```
+
+## Aliases
+
+``` bash
 alias df="clrr df"
 alias dig="clrr dig"
 alias docker="clrr docker"

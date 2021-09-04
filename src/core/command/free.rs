@@ -1,15 +1,15 @@
 use crate::{
-    decorate,
-    parser::{
+    core::{
         decorator::Decoration,
         parser::{ColorerRegex, Parser},
     },
+    decorate,
 };
 
 pub struct Free;
 
 impl Parser for Free {
-    fn regexs(&self) -> Vec<crate::parser::parser::ColorerRegex> {
+    fn regexs(&self) -> Vec<crate::core::parser::ColorerRegex> {
         vec![
             // Mem
             ColorerRegex::new(r"\bMem\b", decorate!(Decoration::BlueFg), None),
@@ -64,11 +64,11 @@ impl Parser for Free {
 #[cfg(test)]
 mod tests {
     use crate::{
-        decorate,
-        parser::{
+        core::{
             decorator::Decoration,
             parser::{init_parser, reader_handler},
         },
+        decorate,
     };
 
     #[test]
@@ -91,9 +91,10 @@ Swap:          15Gi          0B        15Gi
                                      reset = decorate!(Decoration::Default)
         );
 
+        let args: Vec<String> = vec![];
         assert_eq!(
             correct_output,
-            reader_handler(input, &init_parser("free").unwrap())
+            reader_handler(input, &init_parser("free", &args).unwrap())
         );
     }
 
@@ -117,9 +118,10 @@ Swap:      16645116    16645116           0
                                      reset = decorate!(Decoration::Default),
         );
 
+        let args: Vec<String> = vec![];
         assert_eq!(
             correct_output,
-            reader_handler(input, &init_parser("free").unwrap())
+            reader_handler(input, &init_parser("free", &args).unwrap())
         );
     }
 }

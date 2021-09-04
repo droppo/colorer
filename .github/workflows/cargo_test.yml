@@ -1,0 +1,16 @@
+on: [push, pull_request]
+
+name: Cargo CI
+
+jobs:
+  push:
+    name: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Rustfmt
+        run: cargo fmt -- --check
+      - name: Cargo check
+        run: cargo check
+      - name: Run cargo tests
+        run: cargo test --verbose

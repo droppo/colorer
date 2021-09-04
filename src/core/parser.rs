@@ -1,4 +1,4 @@
-use std::{env, sync::Arc};
+use std::sync::Arc;
 
 use crate::decorate;
 
@@ -35,20 +35,32 @@ pub trait Parser: Sync + Send {
     fn regexs(&self) -> Vec<ColorerRegex>;
 }
 
-pub fn init_parser(command: &str) -> Option<Arc<dyn Parser + Sync + Send>> {
+pub fn init_parser(command: &str, args: &[String]) -> Option<Arc<dyn Parser + Sync + Send>> {
     match command {
         "ping" => Some(Arc::new(Ping)),
         "nmap" => Some(Arc::new(Nmap)),
         "docker" => {
-            let subcommand = env::args()
-                .collect::<Vec<String>>()
-                .get(2)
-                .map(|sub| sub.to_owned());
+            let subcommand = args.get(2).map(|sub| sub.to_owned());
             Some(Arc::new(Docker { subcommand }))
         }
         "df" => Some(Arc::new(Df)),
         "free" => Some(Arc::new(Free)),
-        "ls" => Some(Arc::new(Ls)),
+        "ls" => {
+            // check if `-l` is present
+            let mut has_l = false;
+            for arg in args {
+                if arg.starts_with('-') && arg.contains('l') {
+                    has_l = true;
+                    break;
+                }
+            }
+
+            if has_l {
+                Some(Arc::new(Ls))
+            } else {
+                None
+            }
+        }
         "nslookup" => Some(Arc::new(Nslookup)),
         "dig" => Some(Arc::new(Dig)),
         "last" | "lastb" => Some(Arc::new(Last)),

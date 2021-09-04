@@ -1,9 +1,9 @@
 use crate::{
-    decorate,
-    parser::{
+    core::{
         decorator::Decoration,
         parser::{ColorerRegex, Parser},
     },
+    decorate,
 };
 
 pub struct Env;
@@ -20,11 +20,11 @@ impl Parser for Env {
 #[cfg(test)]
 mod tests {
     use crate::{
-        decorate,
-        parser::{
+        core::{
             decorator::Decoration,
             parser::{init_parser, reader_handler},
         },
+        decorate,
     };
 
     #[test]
@@ -63,10 +63,11 @@ mod tests {
             ),
         ];
 
+        let args: Vec<String> = vec![];
         for (index, line) in input.iter().enumerate() {
             assert_eq!(
                 correct_output.get(index).unwrap(),
-                &reader_handler(line.to_string(), &init_parser("env").unwrap())
+                &reader_handler(line.to_string(), &init_parser("env", &args).unwrap())
             );
         }
     }
