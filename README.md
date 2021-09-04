@@ -2,6 +2,9 @@
 
 **Colorer** is a simple text parsing command line utility that provides color to commands that do not have it by default. Tested on Linux and MacOS.
 
+![Crates.io](https://img.shields.io/crates/v/colorer)
+![GitHub last commit](https://img.shields.io/github/last-commit/droppo/colorer)
+
 ## Commands
 
 By using colorer it is possible to add color to the following commands:

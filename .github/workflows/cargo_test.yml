@@ -1,23 +1,16 @@
 on: [push, pull_request]
 
-name: Test
+name: Cargo CI
 
 jobs:
-  test:
-    name: Cargo test
+  push:
+    name: tests
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-  
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-  
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
+      - uses: actions/checkout@v2
+      - name: Run Rustfmt
+        run: cargo fmt -- --check
+      - name: Cargo check
+        run: cargo check
+      - name: Run cargo tests
+        run: cargo test --verbose
