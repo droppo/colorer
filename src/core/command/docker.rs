@@ -120,6 +120,32 @@ impl Parser for Docker {
                         ),
                     ]
                 }
+                "build" => {
+                    vec![
+                        // step
+                        ColorerRegex::new(
+                            r"(?<=(^Step\s+))\d+",
+                            decorate!(Decoration::YellowFgBright),
+                            None,
+                        ),
+                        // total steps
+                        ColorerRegex::new(
+                            r"(?<=(^Step\s+\d+\/))\d+",
+                            decorate!(Decoration::GreenFgBright),
+                            None,
+                        ),
+                        // docker build commands
+                        ColorerRegex::new(
+                            r"\b(FROM|RUN|LABEL|CMD|ARG|ADD|COPY|ENV|ENTRYPOINT|LABEL|EXPOSE|WORKDIR|VOLUME|HEALTHCHECK|ONBUILD)\b",
+                            decorate!(Decoration::MagentaFg, Decoration::Bold),
+                            None,
+                        ),
+                        // status message
+                        ColorerRegex::new(r"(?<=^Status:\s+).*", decorate!(Decoration::Bold), None),
+                        // arrow infos
+                        ColorerRegex::new(r"--->.*", decorate!(Decoration::BlackFgBright), None),
+                    ]
+                }
                 _ => {
                     vec![]
                 }
@@ -271,6 +297,58 @@ mod tests {
         fn test_init() -> Arc<dyn Parser + Sync + Send> {
             Arc::new(Docker {
                 subcommand: Some("network".to_owned()),
+            })
+        }
+
+        for (index, line) in input.iter().enumerate() {
+            assert_eq!(
+                correct_output.get(index).unwrap(),
+                &reader_handler(line.to_string(), &test_init())
+            );
+        }
+    }
+
+    #[test]
+    fn docker_build() {
+        let input = vec![
+            "Status: Downloaded newer image for",
+            "Step 1/8 : FROM debian:latest",
+            "Step 2/8 : WORKDIR /",
+            " ---> Using cache",
+        ];
+
+        let correct_output = vec![
+            format!(
+                "Status: {bold}Downloaded newer image for{default}",
+                default = decorate!(Decoration::Default),
+                bold = decorate!(Decoration::Bold)
+            ),
+            format!(
+                "Step {yellow}1{default}/{green}8{default} : {magenta}{bold}FROM{default} debian:latest",
+                default = decorate!(Decoration::Default),
+                yellow = decorate!(Decoration::YellowFgBright),
+                green = decorate!(Decoration::GreenFgBright),
+                magenta = decorate!(Decoration::MagentaFg),
+                bold = decorate!(Decoration::Bold)
+            ),
+            format!(
+                "Step {yellow}2{default}/{green}8{default} : {magenta}{bold}WORKDIR{default} /",
+                default = decorate!(Decoration::Default),
+                yellow = decorate!(Decoration::YellowFgBright),
+                green = decorate!(Decoration::GreenFgBright),
+                magenta = decorate!(Decoration::MagentaFg),
+                bold = decorate!(Decoration::Bold)
+            ),
+            format!(
+                " {black}---> Using cache{default}",
+                default = decorate!(Decoration::Default),
+                black = decorate!(Decoration::BlackFgBright)
+            )
+        ];
+
+        fn test_init() -> Arc<dyn Parser + Sync + Send> {
+            Arc::new(Docker {
+                subcommand: Some("build".to_owned()),
             })
         }
 

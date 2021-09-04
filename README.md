@@ -25,7 +25,7 @@ The most simple way is to install colorer is to download the program from the re
 
 Another way is to use `cargo`:
 
-``` shell
+``` bash
 cargo install colorer
 ```
 
@@ -33,13 +33,13 @@ cargo install colorer
 
 In order to add color to a command, it should be executed through colorer, for example:
 
-``` shell
+``` bash
 clrr ls -la
 ```
 
 ## Aliases
 
-``` text
+``` bash
 alias df="clrr df"
 alias dig="clrr dig"
 alias docker="clrr docker"
