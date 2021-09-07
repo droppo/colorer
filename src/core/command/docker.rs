@@ -146,6 +146,58 @@ impl Parser for Docker {
                         ColorerRegex::new(r"--->.*", decorate!(Decoration::BlackFgBright), None),
                     ]
                 }
+                "stats" => {
+                    vec![
+                        // name
+                        ColorerRegex::new(
+                            r"(?<=^\S+\s+)\S+",
+                            decorate!(Decoration::MagentaFgBright),
+                            // FIXME find a better way
+                            // the problem is given by the `clear` before CONTAINER
+                            Some(vec![(r"ID", decorate!(Decoration::Default))]),
+                        ),
+                        // cpu % mem %
+                        ColorerRegex::new(
+                            r"\b\d+(.\d+)?%",
+                            decorate!(Decoration::GreenFgBright), // default 0 to 49.99%
+                            Some(vec![
+                                (r"\b[5-7]\d(.\d+)%", decorate!(Decoration::YellowFgBright)), // 50 to 79.99%
+                                (
+                                    r"(\b[8]\d|[9][0-6])(.\d+)%",
+                                    decorate!(Decoration::MagentaBgBright),
+                                ), // 80 to 96,99%
+                                (
+                                    r"(\b[9][7-9]|100)(.\d+)%",
+                                    decorate!(Decoration::RedBgBright),
+                                ), // 97 to 100%
+                            ]),
+                        ),
+                        // mem usage, limit, net i/o, block i/o // TODO useful?
+                        ColorerRegex::new(
+                            r"\d+(.\d+)?(B|kB|MB|GB)",
+                            decorate!(Decoration::RedBgBright),
+                            Some(vec![
+                                (
+                                    r"\d+(.\d+)?(B|kB)|[0-4]\d(.\d+)?(MB)",
+                                    decorate!(Decoration::GreenFgBright),
+                                ),
+                                (
+                                    r"[5-9]\d(\d)?(.\d?)(MB)",
+                                    decorate!(Decoration::YellowFgBright),
+                                ),
+                            ]),
+                        ),
+                        // pids
+                        ColorerRegex::new(
+                            r"\d+$",
+                            decorate!(Decoration::RedFgBright),
+                            Some(vec![
+                                (r"[1][0-9]", decorate!(Decoration::YellowFgBright)),
+                                (r"[0-9]", decorate!(Decoration::GreenFgBright)),
+                            ]),
+                        ),
+                    ]
+                }
                 _ => {
                     vec![]
                 }
@@ -349,6 +401,38 @@ mod tests {
         fn test_init() -> Arc<dyn Parser + Sync + Send> {
             Arc::new(Docker {
                 subcommand: Some("build".to_owned()),
+            })
+        }
+
+        for (index, line) in input.iter().enumerate() {
+            assert_eq!(
+                correct_output.get(index).unwrap(),
+                &reader_handler(line.to_string(), &test_init())
+            );
+        }
+    }
+
+    #[test]
+    fn docker_stats() {
+        let input = vec![
+            "CONTAINER ID   NAME                          CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O         PIDS",
+            "e58a7a049d04   nginx                         99.56%     0B / 0B             55.00%     53.2MB / 27.9MB   0B / 0B           5"
+        ];
+
+        let correct_output = vec![
+            format!("CONTAINER {default}ID{default}   NAME                          CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O         PIDS", default = decorate!(Decoration::Default)),
+            format!("e58a7a049d04   {magenta}nginx{default}                         {red}99.56%{default}     {green}0B{default} / {green}0B{default}             {yellow}55.00%{default}     {yellow}53.2MB{default} / {green}27.9MB{default}   {green}0B{default} / {green}0B{default}           {green}5{default}",
+                    default = decorate!(Decoration::Default),
+                    red = decorate!(Decoration::RedBgBright),
+                    magenta = decorate!(Decoration::MagentaFgBright),
+                    green = decorate!(Decoration::GreenFgBright),
+                    yellow = decorate!(Decoration::YellowFgBright)
+            )
+        ];
+
+        fn test_init() -> Arc<dyn Parser + Sync + Send> {
+            Arc::new(Docker {
+                subcommand: Some("stats".to_owned()),
             })
         }
 
