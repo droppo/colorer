@@ -76,7 +76,11 @@ impl Parser for Ls {
                 ]),
             ), // directories /(?<=(^[d].*\w{3}\s\d{1,2}\s\S+\s)).*/g
             // executables
-            ColorerRegex::new(r"(\S+\s+->\s+)?\S+\*", decorate!(Decoration::GreenFgBright, Decoration::Bold), None),
+            ColorerRegex::new(
+                r"(\S+\s+->\s+)?\S+\*",
+                decorate!(Decoration::GreenFgBright, Decoration::Bold),
+                None,
+            ),
         ]
     }
 }
