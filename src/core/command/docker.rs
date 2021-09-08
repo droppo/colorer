@@ -174,15 +174,15 @@ impl Parser for Docker {
                         ),
                         // mem usage, limit, net i/o, block i/o // TODO useful?
                         ColorerRegex::new(
-                            r"\d+(.\d+)?(B|kB|MB|GB)",
+                            r"\d+(.\d+)?(B|k(i)?B|M(i)?B|G(i)?B)",
                             decorate!(Decoration::RedBgBright),
                             Some(vec![
                                 (
-                                    r"\d+(.\d+)?(B|kB)|[0-4]\d(.\d+)?(MB)",
+                                    r"\d+(.\d+)?(B|k(i)?B)|[0-4]\d(.\d+)?(M(i)?B)",
                                     decorate!(Decoration::GreenFgBright),
                                 ),
                                 (
-                                    r"[5-9]\d(\d)?(.\d?)(MB)",
+                                    r"[5-9]\d(\d)?(.\d?)(M(i)?B)",
                                     decorate!(Decoration::YellowFgBright),
                                 ),
                             ]),
@@ -416,12 +416,12 @@ mod tests {
     fn docker_stats() {
         let input = vec![
             "CONTAINER ID   NAME                          CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O         PIDS",
-            "e58a7a049d04   nginx                         99.56%     0B / 0B             55.00%     53.2MB / 27.9MB   0B / 0B           5"
+            "e58a7a049d04   nginx                         99.56%     0B / 0B             55.00%     53.2MiB / 27.9MB   0B / 0B           5"
         ];
 
         let correct_output = vec![
             format!("CONTAINER {default}ID{default}   NAME                          CPU %     MEM USAGE / LIMIT   MEM %     NET I/O           BLOCK I/O         PIDS", default = decorate!(Decoration::Default)),
-            format!("e58a7a049d04   {magenta}nginx{default}                         {red}99.56%{default}     {green}0B{default} / {green}0B{default}             {yellow}55.00%{default}     {yellow}53.2MB{default} / {green}27.9MB{default}   {green}0B{default} / {green}0B{default}           {green}5{default}",
+            format!("e58a7a049d04   {magenta}nginx{default}                         {red}99.56%{default}     {green}0B{default} / {green}0B{default}             {yellow}55.00%{default}     {yellow}53.2MiB{default} / {green}27.9MB{default}   {green}0B{default} / {green}0B{default}           {green}5{default}",
                     default = decorate!(Decoration::Default),
                     red = decorate!(Decoration::RedBgBright),
                     magenta = decorate!(Decoration::MagentaFgBright),
