@@ -1,3 +1,10 @@
+# 0.3.1
+
+## What's new
+- added support for *stats* subcommand for `docker`
+- added color to executables for `ls` if `-F` flag is used
+- added color to filtered ports in `nmap`
+
 # 0.3.0
 
 ## What's new
