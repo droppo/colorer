@@ -23,11 +23,14 @@ impl Parser for Nmap {
                 decorate!(Decoration::YellowFgBright),
                 None,
             ),
-            // state: green if open, red otherwise
+            // state
             ColorerRegex::new(
                 r"(?<=\d+\/[a-z]+\s+)[^\s]+",
                 decorate!(Decoration::GreenFgBright),
-                Some(vec![("closed", decorate!(Decoration::RedFgBright))]),
+                Some(vec![
+                    ("closed", decorate!(Decoration::RedFgBright)),
+                    ("filtered", decorate!(Decoration::MagentaFgBright)),
+                ]),
             ),
             // service
             ColorerRegex::new(
@@ -67,7 +70,7 @@ mod tests {
 Host is up (0.020s latency).
 Not shown: 994 closed ports
 PORT     STATE SERVICE  VERSION
-22/tcp  open  ssh      OpenSSH 8.3 (protocol 2.0)
+22/tcp  filtered  ssh      OpenSSH 8.3 (protocol 2.0)
 53/tcp   open  domain   (generic dns response: NOTIMP)
 80/tcp   open  http     lighttpd 1.4.53
 443/tcp  open  ssl/http nginx
@@ -79,7 +82,7 @@ PORT     STATE SERVICE  VERSION
 Host is {green}up{reset} (0.020s latency).
 Not shown: 994 closed ports
 PORT     STATE SERVICE  VERSION
-{yellow}22/tcp{reset}  {green}open{reset}  {cyan}ssh{reset}      {purple}OpenSSH 8.3 (protocol 2.0){reset}
+{yellow}22/tcp{reset}  {purple}filtered{reset}  {cyan}ssh{reset}      {purple}OpenSSH 8.3 (protocol 2.0){reset}
 {yellow}53/tcp{reset}   {green}open{reset}  {cyan}domain{reset}   {purple}(generic dns response: NOTIMP){reset}
 {yellow}80/tcp{reset}   {green}open{reset}  {cyan}http{reset}     {purple}lighttpd 1.4.53{reset}
 {yellow}443/tcp{reset}  {green}open{reset}  {cyan}ssl/http{reset} {purple}nginx{reset}

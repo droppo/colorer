@@ -32,7 +32,7 @@ impl Parser for Docker {
                         ),
                         // status
                         ColorerRegex::new(
-                            r#"(\w+\s\d+\s\w+|\w+\s\(\d+\)\s\d+(\s\w+){2})"#,
+                            r#"(\w+\s(\d|about a)+\s\w+|\w+\s\(\d+\)\s\d+(\s\w+){2})"#,
                             decorate!(Decoration::GreenFgBright),
                             Some(vec![(
                                 r#"\w+\s\(\d+\)\s\d+\s\w+\s\w+"#,
@@ -226,13 +226,13 @@ mod tests {
     #[test]
     fn docker_ps() {
         let input = vec![
-            r#"12c3dedd07be   kunde21/gitea-arm   "/usr/bin/entrypoint…"   5 weeks ago   Up 5 days  3000/tcp, 0.0.0.0:222->22/tcp, :::222->22/tcp   gitea"#.to_string(),
+            r#"12c3dedd07be   kunde21/gitea-arm   "/usr/bin/entrypoint…"   5 weeks ago   Up about a minute  3000/tcp, 0.0.0.0:222->22/tcp, :::222->22/tcp   gitea"#.to_string(),
             r#"a26d8ced06fd   eclipse-mosquitto   "/docker-entrypoint.…"   5 hours ago   Restarting (13) 47 seconds ago   message-broker"#.to_string()
         ];
 
         let correct_output = vec![
             format!(
-                r#"12c3dedd07be   {magenta}kunde21/gitea-arm{reset}   "/usr/bin/entrypoint…"   {blue}5 weeks ago{reset}   {green}Up 5 days{reset}  {yellow}3000/tcp{reset}, {green}0.0.0.0:222{reset}->{yellow}22/tcp{reset}, {green}:::222{reset}->{yellow}22/tcp{reset}   {cyan}gitea{reset}"#,
+                r#"12c3dedd07be   {magenta}kunde21/gitea-arm{reset}   "/usr/bin/entrypoint…"   {blue}5 weeks ago{reset}   {green}Up about a minute{reset}  {yellow}3000/tcp{reset}, {green}0.0.0.0:222{reset}->{yellow}22/tcp{reset}, {green}:::222{reset}->{yellow}22/tcp{reset}   {cyan}gitea{reset}"#,
                 magenta = decorate!(Decoration::MagentaFgBright),
                 blue = decorate!(Decoration::BlueFgBright),
                 green = decorate!(Decoration::GreenFgBright),
