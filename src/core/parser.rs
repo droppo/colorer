@@ -41,7 +41,26 @@ pub fn init_parser(command: &str, args: &[String]) -> Option<Arc<dyn Parser + Sy
         "nmap" => Some(Arc::new(Nmap)),
         "docker" => {
             let subcommand = args.get(2).map(|sub| sub.to_owned());
-            Some(Arc::new(Docker { subcommand }))
+
+            // `--format` changes the output
+            let has_format = if Some("stats".to_string()) == subcommand {
+                let mut has_format = false;
+                for arg in args {
+                    if arg.starts_with("--") && arg.contains("format") {
+                        has_format = true;
+                        break;
+                    }
+                }
+                has_format
+            } else {
+                false
+            };
+
+            if has_format {
+                None
+            } else {
+                Some(Arc::new(Docker { subcommand }))
+            }
         }
         "df" => Some(Arc::new(Df)),
         "free" => Some(Arc::new(Free)),

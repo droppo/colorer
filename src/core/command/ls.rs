@@ -75,6 +75,12 @@ impl Parser for Ls {
                     (r"(?<=\s)\.\w+\S+", decorate!(Decoration::BlueFgBright)),
                 ]),
             ), // directories /(?<=(^[d].*\w{3}\s\d{1,2}\s\S+\s)).*/g
+            // executables
+            ColorerRegex::new(
+                r"(\S+\s+->\s+)?\S+\*",
+                decorate!(Decoration::GreenFgBright, Decoration::Bold),
+                None,
+            ),
         ]
     }
 }
@@ -231,7 +237,7 @@ mod tests {
                 default = decorate!(Decoration::Default)
             ),
             format!(
-                "{bold}l{default}{yellow}rwx{default}{red}rwx{default}{green}rwx{default}   1 {red}root{default} {red}root{default}         {green}20{default} ago  1  2019 vi -> /etc/alternatives/vi*",
+                "{bold}l{default}{yellow}rwx{default}{red}rwx{default}{green}rwx{default}   1 {red}root{default} {red}root{default}         {green}20{default} ago  1  2019 {green}{bold}vi -> /etc/alternatives/vi*{default}",
                 green = decorate!(Decoration::GreenFgBright),
                 bold = decorate!(Decoration::Bold),
                 yellow = decorate!(Decoration::YellowFgBright),
