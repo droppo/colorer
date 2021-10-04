@@ -50,6 +50,12 @@ impl Parser for Nmap {
                 decorate!(Decoration::GreenFgBright),
                 Some(vec![("down", decorate!(Decoration::RedFgBright))]),
             ),
+            // Nmap scan report for
+            ColorerRegex::new(
+                r"Nmap scan report for",
+                decorate!(Decoration::Underlined),
+                None,
+            ),
         ]
     }
 }
@@ -78,7 +84,7 @@ PORT     STATE SERVICE  VERSION
             .to_string();
 
         let correct_output =
-            format!("Nmap scan report for {green}192.168.0.119{reset}
+            format!("{underlined}Nmap scan report for{reset} {green}192.168.0.119{reset}
 Host is {green}up{reset} (0.020s latency).
 Not shown: 994 closed ports
 PORT     STATE SERVICE  VERSION
@@ -91,7 +97,8 @@ PORT     STATE SERVICE  VERSION
                     yellow = decorate!(Decoration::YellowFgBright),
                     green = decorate!(Decoration::GreenFgBright),
                     cyan = decorate!(Decoration::CyanFgBright),
-                    purple = decorate!(Decoration::MagentaFgBright)
+                    purple = decorate!(Decoration::MagentaFgBright),
+                    underlined = decorate!(Decoration::Underlined)
             );
 
         let args: Vec<String> = vec![];
