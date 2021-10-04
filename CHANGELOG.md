@@ -1,3 +1,9 @@
+# 0.3.2
+
+## What's new
+- added support for *pull* subcommand for `docker`
+- added a new regex for `nmap`
+
 # 0.3.1
 
 ## What's new
