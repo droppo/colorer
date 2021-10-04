@@ -198,6 +198,30 @@ impl Parser for Docker {
                         ),
                     ]
                 }
+                "pull" => {
+                    vec![
+                        // pulling/veryfing
+                        ColorerRegex::new(
+                            r"(Pulling|Verifying).*",
+                            decorate!(Decoration::YellowFgBright),
+                            None,
+                        ),
+                        // waiting
+                        ColorerRegex::new(r"Waiting", decorate!(Decoration::BlackFgBright), None),
+                        // download complete
+                        ColorerRegex::new(
+                            r"Download complete",
+                            decorate!(Decoration::GreenFgBright),
+                            None,
+                        ),
+                        // pull complate
+                        ColorerRegex::new(
+                            r"Pull complete",
+                            decorate!(Decoration::GreenBgBright),
+                            None,
+                        ),
+                    ]
+                }
                 _ => {
                     vec![]
                 }
@@ -212,7 +236,7 @@ impl Parser for Docker {
 
 #[cfg(test)]
 mod tests {
-    use std::sync::Arc;
+    use std::{sync::Arc, vec};
 
     use crate::{
         core::{
@@ -433,6 +457,64 @@ mod tests {
         fn test_init() -> Arc<dyn Parser + Sync + Send> {
             Arc::new(Docker {
                 subcommand: Some("stats".to_owned()),
+            })
+        }
+
+        for (index, line) in input.iter().enumerate() {
+            assert_eq!(
+                correct_output.get(index).unwrap(),
+                &reader_handler(line.to_string(), &test_init())
+            );
+        }
+    }
+
+    #[test]
+    fn docker_pull() {
+        let input = vec![
+            "latest: Pulling from library/mysql",
+            "07aded7c29c6: Pulling fs layer",
+            "635b0b84d686: Waiting",
+            "1b7cb4d6fe05: Verifying Checksum",
+            "6d24c7242d02: Download complete",
+            "07aded7c29c6: Pull complete",
+        ];
+
+        let correct_output = vec![
+            format!(
+                "latest: {yellow}Pulling from library/mysql{default}",
+                yellow = decorate!(Decoration::YellowFgBright),
+                default = decorate!(Decoration::Default)
+            ),
+            format!(
+                "07aded7c29c6: {yellow}Pulling fs layer{default}",
+                yellow = decorate!(Decoration::YellowFgBright),
+                default = decorate!(Decoration::Default)
+            ),
+            format!(
+                "635b0b84d686: {black}Waiting{default}",
+                black = decorate!(Decoration::BlackFgBright),
+                default = decorate!(Decoration::Default)
+            ),
+            format!(
+                "1b7cb4d6fe05: {yellow}Verifying Checksum{default}",
+                yellow = decorate!(Decoration::YellowFgBright),
+                default = decorate!(Decoration::Default)
+            ),
+            format!(
+                "6d24c7242d02: {green}Download complete{default}",
+                green = decorate!(Decoration::GreenFgBright),
+                default = decorate!(Decoration::Default)
+            ),
+            format!(
+                "07aded7c29c6: {green_fg}Pull complete{default}",
+                green_fg = decorate!(Decoration::GreenBgBright),
+                default = decorate!(Decoration::Default)
+            ),
+        ];
+
+        fn test_init() -> Arc<dyn Parser + Sync + Send> {
+            Arc::new(Docker {
+                subcommand: Some("pull".to_owned()),
             })
         }
 
