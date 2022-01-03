@@ -2,7 +2,7 @@
 name = "colorer"
 version = "0.3.2"
 authors = ["droppo"]
-edition = "2018"
+edition = "2021"
 description = "Simple command line utility that add color to commands that do not have it by default."
 documentation = "https://github.com/droppo/colorer"
 repository = "https://github.com/droppo/colorer"
