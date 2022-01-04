@@ -1,6 +1,6 @@
 [package]
 name = "colorer"
-version = "0.3.2"
+version = "1.0.0-beta1"
 authors = ["droppo"]
 edition = "2021"
 description = "Simple command line utility that add color to commands that do not have it by default."
@@ -24,3 +24,7 @@ ctrlc = "3.1.9"
 nix = "0.22.0"
 onig = "6.2.0"
 pico-args = "0.4.2"
+serde = "1.0.133"
+serde_derive = "1.0.133"
+serde_json = "1.0.74"
+toml = "0.5.8"

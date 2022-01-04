@@ -1,90 +1,88 @@
-use crate::{
-    core::{
-        decorator::Decoration,
-        parser::{ColorerRegex, Parser},
-    },
-    decorate,
+use crate::core::{
+    decorator::Decoration,
+    parser::{ColorerRegex, Command},
 };
 
 pub struct Ls;
 
-impl Parser for Ls {
-    fn regexs(&self) -> Vec<ColorerRegex> {
+impl Ls {
+    pub fn regexs() -> Command {
         // TODO find a better regex for dates... this seems pretty expensive
-        vec![
+        let v = vec![
             // date
             // ColorerRegex::new(r"(\w{3}|\d{1,2})\s+(\w{3}|\d{1,2})\s+(\d{4}|\d{1,2}(\:|\.)\d{2})", decorate!(Decoration::Underlined), None),
             // root user
-            ColorerRegex::new(
-                r"(?<=\s)root(?=\s)",
-                decorate!(Decoration::RedFgBright),
-                None,
-            ),
+            ColorerRegex::new(r"(?<=\s)root(?=\s)", vec![Decoration::RedFgBright], None),
             // size
             ColorerRegex::new(
                 r"\S+(?=(\s+(\w{3}|\d{1,2})\s+(\w{3}|\d{1,2})\s+(\d{4}|\d{1,2}[:.]\d{2})))",
-                decorate!(Decoration::Default), // TODO None insead of Default
+                vec![Decoration::Default], // TODO None insead of Default
                 Some(vec![
                     (
-                        r"(\S+[KB])|\S{1}([.,]\d+)?M|(\d{1,7})",
-                        decorate!(Decoration::GreenFgBright),
+                        r"(\S+[KB])|\S{1}([.,]\d+)?M|(\d{1,7})".to_string(),
+                        vec![Decoration::GreenFgBright],
                     ),
                     (
-                        r"(\S+G)|(\d{10,})",
-                        decorate!(Decoration::RedFgBright, Decoration::Bold),
+                        r"(\S+G)|(\d{10,})".to_string(),
+                        vec![Decoration::RedFgBright, Decoration::Bold],
                     ),
                     (
-                        r"(\d{2,}([.,]\d+)?M)|(\d{8,})",
-                        decorate!(Decoration::YellowFgBright, Decoration::Bold),
+                        r"(\d{2,}([.,]\d+)?M)|(\d{8,})".to_string(),
+                        vec![Decoration::YellowFgBright, Decoration::Bold],
                     ),
                 ]),
             ),
             // directory
             ColorerRegex::new(
                 r"[bcdlnps](?=([-rwxst]{3}){3})",
-                decorate!(Decoration::Bold),
+                vec![Decoration::Bold],
                 None,
             ),
             // user permission
             ColorerRegex::new(
                 r"(?<=(^[-bcdlnps]{1}))[-rwxst]{3}",
-                decorate!(Decoration::YellowFgBright),
+                vec![Decoration::YellowFgBright],
                 None,
             ),
             // group permission
             ColorerRegex::new(
                 r"(?<=(^[-bcdlnps]{1}\S{3}))[-rwxst]{3}",
-                decorate!(Decoration::RedFgBright),
+                vec![Decoration::RedFgBright],
                 None,
             ),
             // other permission
             ColorerRegex::new(
                 r"(?<=(^[-bcdlnps]{1}\S{6}))[-rwxst]{3}",
-                decorate!(Decoration::GreenFgBright),
+                vec![Decoration::GreenFgBright],
                 None,
             ),
             // hidden files and directories
             ColorerRegex::new(
                 r"((?<=\s)\.\w+\S+|\S+\/)$",
-                decorate!(Decoration::BlueFgBright),
+                vec![Decoration::BlueFgBright],
                 Some(vec![
                     (
-                        r"\S+\/",
-                        decorate!(Decoration::BlueFgBright, Decoration::Underlined),
+                        r"\S+\/".to_string(),
+                        vec![Decoration::BlueFgBright, Decoration::Underlined],
                     ),
-                    (r"(?<=\s)\.\w+\S+", decorate!(Decoration::BlueFgBright)),
+                    (
+                        r"(?<=\s)\.\w+\S+".to_string(),
+                        vec![Decoration::BlueFgBright],
+                    ),
                 ]),
             ), // directories /(?<=(^[d].*\w{3}\s\d{1,2}\s\S+\s)).*/g
             // executables
             ColorerRegex::new(
                 r"(\S+\s+->\s+)?\S+\*",
-                decorate!(Decoration::GreenFgBright, Decoration::Bold),
+                vec![Decoration::GreenFgBright, Decoration::Bold],
                 None,
             ),
-        ]
+        ];
+
+        Command::new(None, None, Some(v))
     }
 }
-
+/*
 #[cfg(test)]
 mod tests {
     use crate::core::parser::{init_parser, reader_handler};
@@ -255,3 +253,4 @@ mod tests {
         }
     }
 }
+*/

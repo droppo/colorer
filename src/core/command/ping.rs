@@ -1,107 +1,113 @@
-use crate::{
-    core::{
-        decorator::Decoration,
-        parser::{ColorerRegex, Parser},
-    },
-    decorate,
+use crate::core::{
+    decorator::Decoration,
+    parser::{ColorerRegex, Command, Parser},
 };
 
 pub struct Ping;
 
 impl Parser for Ping {
-    fn regexs(&self) -> Vec<ColorerRegex> {
-        vec![
+    fn regexs(&self) -> Command {
+        let colors = vec![
             // url 1
             ColorerRegex::new(
-                r"((?<=(PING\s))|(?<=(^-{3}\s)))\S+",
-                decorate!(Decoration::MagentaFgBright),
+                r"((?<=(PING\s))|(?<=(^-{3}\s)))\S+".to_string(),
+                vec![Decoration::MagentaFgBright],
                 None,
             ),
             // url 2
             ColorerRegex::new(
-                r"(?<=([\d+\sbytes]?\s[fF]rom\s)).+?(?=[:|\s])",
-                decorate!(Decoration::CyanFgBright),
+                r"(?<=([\d+\sbytes]?\s[fF]rom\s)).+?(?=[:|\s])".to_string(),
+                vec![Decoration::CyanFgBright],
                 Some(vec![(
-                    r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}",
-                    decorate!(Decoration::GreenFgBright),
+                    r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}".to_string(),
+                    vec![Decoration::GreenFgBright],
                 )]),
             ),
             // IP
             ColorerRegex::new(
-                r"(?<=\s(\()).*?(?=(\)))",
-                decorate!(Decoration::GreenFgBright),
+                r"(?<=\s(\()).*?(?=(\)))".to_string(),
+                vec![Decoration::GreenFgBright],
                 None,
             ),
             // seq
             ColorerRegex::new(
-                r"(?<=(icmp_seq=))[0-9]+",
-                decorate!(Decoration::YellowFgBright),
+                r"(?<=(icmp_seq=))[0-9]+".to_string(),
+                vec![Decoration::YellowFgBright],
                 None,
             ),
             // ttl
             ColorerRegex::new(
-                r"(?<=(ttl=))[0-9]+",
-                decorate!(Decoration::YellowFgBright),
+                r"(?<=(ttl=))[0-9]+".to_string(),
+                vec![Decoration::YellowFgBright],
                 None,
             ),
             // time
             ColorerRegex::new(
-                r"(?<=(time=))[0-9]+.[0-9]+",
-                decorate!(Decoration::YellowFgBright),
+                r"(?<=(time=))[0-9]+.[0-9]+".to_string(),
+                vec![Decoration::YellowFgBright],
                 None,
             ),
             // host unreachable
             ColorerRegex::new(
-                "Destination Host Unreachable",
-                decorate!(Decoration::RedBgBright),
+                "Destination Host Unreachable".to_string(),
+                vec![Decoration::RedBgBright],
                 None,
             ),
             // min
-            ColorerRegex::new(r"min", decorate!(Decoration::BlueFgBright), None),
+            ColorerRegex::new(r"min".to_string(), vec![Decoration::BlueFgBright], None),
             // avg
-            ColorerRegex::new(r"avg", decorate!(Decoration::MagentaFgBright), None),
+            ColorerRegex::new(r"avg".to_string(), vec![Decoration::MagentaFgBright], None),
             // max
-            ColorerRegex::new(r"max", decorate!(Decoration::GreenFgBright), None),
+            ColorerRegex::new(r"max".to_string(), vec![Decoration::GreenFgBright], None),
             // mdev
-            ColorerRegex::new(r"mdev|stddev", decorate!(Decoration::BlackFgBright), None),
+            ColorerRegex::new(
+                r"mdev|stddev".to_string(),
+                vec![Decoration::BlackFgBright],
+                None,
+            ),
             // min value
             ColorerRegex::new(
-                r"(?<=(=\s))[0-9]+.[0-9]+",
-                decorate!(Decoration::BlueFgBright),
+                r"(?<=(=\s))[0-9]+.[0-9]+".to_string(),
+                vec![Decoration::BlueFgBright],
                 None,
             ),
             // avg value
             ColorerRegex::new(
-                r"(?<=(=\s[0-9]+.[0-9]+)\/)[0-9]+.[0-9]+",
-                decorate!(Decoration::MagentaFgBright),
+                r"(?<=(=\s[0-9]+.[0-9]+)\/)[0-9]+.[0-9]+".to_string(),
+                vec![Decoration::MagentaFgBright],
                 None,
             ),
             // max value
             ColorerRegex::new(
-                r"(?<=(=\s[0-9]+.[0-9]+)\/[0-9]+.[0-9]+\/)[0-9]+.[0-9]+",
-                decorate!(Decoration::GreenFgBright),
+                r"(?<=(=\s[0-9]+.[0-9]+)\/[0-9]+.[0-9]+\/)[0-9]+.[0-9]+".to_string(),
+                vec![Decoration::GreenFgBright],
                 None,
             ),
             // mdev value
             ColorerRegex::new(
-                r"(?<=(=\s[0-9]+.[0-9]+)\/[0-9]+.[0-9]+\/[0-9]+.[0-9]+\/)[0-9]+.[0-9]+",
-                decorate!(Decoration::BlackFgBright),
+                r"(?<=(=\s[0-9]+.[0-9]+)\/[0-9]+.[0-9]+\/[0-9]+.[0-9]+\/)[0-9]+.[0-9]+".to_string(),
+                vec![Decoration::BlackFgBright],
                 None,
             ),
             // loss
             ColorerRegex::new(
-                r"\S*\%",
-                decorate!(Decoration::GreenFgBright),
+                r"\S*\%".to_string(),
+                vec![Decoration::GreenFgBright],
                 Some(vec![
-                    (r"0%", decorate!(Decoration::GreenFgBright)),
-                    (r"\d{1,2}(\.\d+)?%", decorate!(Decoration::YellowFgBright)),
-                    (r"100%", decorate!(Decoration::RedBgBright)),
+                    (r"0%".to_string(), vec![Decoration::GreenFgBright]),
+                    (
+                        r"\d{1,2}(\.\d+)?%".to_string(),
+                        vec![Decoration::YellowFgBright],
+                    ),
+                    (r"100%".to_string(), vec![Decoration::RedBgBright]),
                 ]),
             ),
-        ]
+        ];
+
+        Command::new(Some("ping".to_string()), colors)
     }
 }
-
+/*
 #[cfg(test)]
 mod tests {
 
@@ -254,3 +260,4 @@ From {green}192.168.0.117{reset} icmp_seq={yellow}3{reset} {red_bg}Destination H
         );
     }
 }
+*/

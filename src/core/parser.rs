@@ -1,104 +1,95 @@
-use std::sync::Arc;
+use std::{collections::HashMap, env, fs::File, io::Read, path::Path, sync::Arc};
 
-use crate::decorate;
+use serde_derive::{Deserialize, Serialize};
 
-use super::{
-    command::{
-        df::Df, dig::Dig, docker::Docker, env::Env, free::Free, last::Last, ls::Ls, lsns::Lsns,
-        nmap::Nmap, nslookup::Nslookup, ping::Ping,
-    },
-    decorator::Decoration,
-};
+use super::decorator::{decorate, Decoration};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Command {
+    disabling_flags: Option<Vec<String>>,
+    subcommand: Option<HashMap<String, Vec<ColorerRegex>>>,
+    colors: Option<Vec<ColorerRegex>>,
+}
+
+impl Command {
+    pub fn new(
+        disabling_flags: Option<Vec<String>>,
+        subcommand: Option<HashMap<String, Vec<ColorerRegex>>>,
+        colors: Option<Vec<ColorerRegex>>,
+    ) -> Self {
+        Self {
+            disabling_flags,
+            subcommand,
+            colors,
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ColorerRegex {
-    regex: &'static str,
-    default_decorator: String,
-    optional_decorator: Option<Vec<(&'static str, String)>>,
+    regex: String,
+    default_decorator: Vec<Decoration>,
+    optional_decorator: Option<Vec<(String, Vec<Decoration>)>>,
 }
 
 impl ColorerRegex {
     pub fn new(
-        regex: &'static str,
-        default_decorator: String,
-        optional_decorator: Option<Vec<(&'static str, String)>>,
-    ) -> ColorerRegex {
-        ColorerRegex {
-            regex,
+        regex: &str,
+        default_decorator: Vec<Decoration>,
+        optional_decorator: Option<Vec<(String, Vec<Decoration>)>>,
+    ) -> Self {
+        Self {
+            regex: regex.to_string(),
             default_decorator,
             optional_decorator,
         }
     }
 }
 
-pub trait Parser: Sync + Send {
-    fn regexs(&self) -> Vec<ColorerRegex>;
-}
+pub fn init_parser(command: &str, args: &[String]) -> Option<Arc<Vec<ColorerRegex>>> {
+    // let p = Docker::regexs();
+    // println!("{}", toml::to_string(&p).unwrap());
+    // None
 
-pub fn init_parser(command: &str, args: &[String]) -> Option<Arc<dyn Parser + Sync + Send>> {
-    match command {
-        "ping" => Some(Arc::new(Ping)),
-        "nmap" => Some(Arc::new(Nmap)),
-        "docker" => {
-            let subcommand = args.get(2).map(|sub| sub.to_owned());
+    // TODO (???) spostare qui dentro la creazione e merge di eventuali sottocomandi e non
+    // quindi ritornare un ColorerRegex e non Command
 
-            // `--format` changes the output
-            let has_format = if Some("stats".to_string()) == subcommand {
-                let mut has_format = false;
-                for arg in args {
-                    if arg.starts_with("--") && arg.contains("format") {
-                        has_format = true;
-                        break;
+    let home = env::var("HOME").unwrap();
+    let config = Path::new(&home).join(".config").join("colorer");
+    if config.exists() {
+        let config_path = config.join(format!("{}.toml", command));
+
+        if config_path.exists() {
+            let mut config_file = File::open(config_path).unwrap();
+            let mut configs = String::new();
+            config_file.read_to_string(&mut configs).unwrap();
+            let pattern: Command = toml::from_str(&configs).unwrap();
+
+            // TODO check if the loaded configs contains any disabling flag
+            if let Some(values) = pattern.colors {
+                return Some(Arc::new(values));
+            } else if let Some(values) = pattern.subcommand {
+                if let Some(subcommand) = args.get(2) {
+                    if let Some(colors) = values.get(subcommand) {
+                        return Some(Arc::new(colors.to_vec()));
                     }
                 }
-                has_format
-            } else {
-                false
-            };
-
-            if has_format {
-                None
-            } else {
-                Some(Arc::new(Docker { subcommand }))
             }
         }
-        "df" => Some(Arc::new(Df)),
-        "free" => Some(Arc::new(Free)),
-        "ls" => {
-            // check if `-l` is present
-            let mut has_l = false;
-            for arg in args {
-                if arg.starts_with('-') && arg.contains('l') {
-                    has_l = true;
-                    break;
-                }
-            }
-
-            if has_l {
-                Some(Arc::new(Ls))
-            } else {
-                None
-            }
-        }
-        "nslookup" => Some(Arc::new(Nslookup)),
-        "dig" => Some(Arc::new(Dig)),
-        "last" | "lastb" => Some(Arc::new(Last)),
-        "env" => Some(Arc::new(Env)),
-        "lsns" => Some(Arc::new(Lsns)),
-        _ => None,
     }
+
+    None
 }
 
-pub fn reader_handler(line: String, parser: &Arc<dyn Parser + Sync + Send>) -> String {
+pub fn reader_handler(line: String, parser: &Arc<Vec<ColorerRegex>>) -> String {
     // TODO check a better way to avoid two cycles
     let mut positions = vec![];
     let mut colored_line = line.to_string();
 
     // 1: find all the positions
     // NOTE a variable is used to meet borrow checker requirements
-    let regexs = parser.regexs();
-    regexs.iter().for_each(|r| {
-        onig::Regex::new(r.regex)
+    parser.iter().for_each(|r| {
+        onig::Regex::new(&r.regex)
             .unwrap()
             .find_iter(&line)
             .for_each(|position| {
@@ -114,7 +105,7 @@ pub fn reader_handler(line: String, parser: &Arc<dyn Parser + Sync + Send>) -> S
             Some(decorators) => {
                 let mut decorator = &p.1.default_decorator;
                 for d in decorators.iter() {
-                    if onig::Regex::new(d.0).unwrap().is_match(part) {
+                    if onig::Regex::new(&d.0.to_string()).unwrap().is_match(part) {
                         decorator = &d.1;
                         break;
                     }
@@ -125,7 +116,7 @@ pub fn reader_handler(line: String, parser: &Arc<dyn Parser + Sync + Send>) -> S
         };
         colored_line.replace_range(
             p.0 .0..p.0 .1,
-            format!("{}{}{}", decorator, part, decorate!(Decoration::Default)).as_str(),
+            format!("{}{}{}", decorate(decorator), part, Decoration::Default).as_str(),
         )
     });
 
