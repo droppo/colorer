@@ -1,33 +1,33 @@
-[[colors]]
+[[command]]
 regex = "(?<=\\s)root(?=\\s)"
 default_decorator = ["RedFgBright"]
 
-[[colors]]
+[[command]]
 regex = "\\S+(?=(\\s+(\\w{3}|\\d{1,2})\\s+(\\w{3}|\\d{1,2})\\s+(\\d{4}|\\d{1,2}[:.]\\d{2})))"
 default_decorator = ["Default"]
-optional_decorator = [["(\\S+[KB])|\\S{1}([.,]\\d+)?M|(\\d{1,7})", ["GreenFgBright"]], ["(\\S+G)|(\\d{10,})", ["RedFgBright", "Bold"]], ["(\\d{2,}([.,]\\d+)?M)|(\\d{8,})", ["YellowFgBright", "Bold"]]]
+optional_decorators = [["(\\S+[KB])|\\S{1}([.,]\\d+)?M|(\\d{1,7})", ["GreenFgBright"]], ["(\\S+G)|(\\d{10,})", ["RedFgBright", "Bold"]], ["(\\d{2,}([.,]\\d+)?M)|(\\d{8,})", ["YellowFgBright", "Bold"]]]
 
-[[colors]]
+[[command]]
 regex = "[bcdlnps](?=([-rwxst]{3}){3})"
 default_decorator = ["Bold"]
 
-[[colors]]
+[[command]]
 regex = "(?<=(^[-bcdlnps]{1}))[-rwxst]{3}"
 default_decorator = ["YellowFgBright"]
 
-[[colors]]
+[[command]]
 regex = "(?<=(^[-bcdlnps]{1}\\S{3}))[-rwxst]{3}"
 default_decorator = ["RedFgBright"]
 
-[[colors]]
+[[command]]
 regex = "(?<=(^[-bcdlnps]{1}\\S{6}))[-rwxst]{3}"
 default_decorator = ["GreenFgBright"]
 
-[[colors]]
+[[command]]
 regex = "((?<=\\s)\\.\\w+\\S+|\\S+\\/)$"
 default_decorator = ["BlueFgBright"]
-optional_decorator = [["\\S+\\/", ["BlueFgBright", "Underlined"]], ["(?<=\\s)\\.\\w+\\S+", ["BlueFgBright"]]]
+optional_decorators = [["\\S+\\/", ["BlueFgBright", "Underlined"]], ["(?<=\\s)\\.\\w+\\S+", ["BlueFgBright"]]]
 
-[[colors]]
+[[command]]
 regex = "(\\S+\\s+->\\s+)?\\S+\\*"
 default_decorator = ["GreenFgBright", "Bold"]

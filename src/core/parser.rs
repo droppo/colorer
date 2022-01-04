@@ -8,19 +8,19 @@ use super::decorator::{decorate, Decoration};
 pub struct Command {
     disabling_flags: Option<Vec<String>>,
     subcommand: Option<HashMap<String, Vec<ColorerRegex>>>,
-    colors: Option<Vec<ColorerRegex>>,
+    command: Option<Vec<ColorerRegex>>,
 }
 
 impl Command {
     pub fn new(
         disabling_flags: Option<Vec<String>>,
         subcommand: Option<HashMap<String, Vec<ColorerRegex>>>,
-        colors: Option<Vec<ColorerRegex>>,
+        command: Option<Vec<ColorerRegex>>,
     ) -> Self {
         Self {
             disabling_flags,
             subcommand,
-            colors,
+            command,
         }
     }
 }
@@ -29,31 +29,24 @@ impl Command {
 pub struct ColorerRegex {
     regex: String,
     default_decorator: Vec<Decoration>,
-    optional_decorator: Option<Vec<(String, Vec<Decoration>)>>,
+    optional_decorators: Option<Vec<(String, Vec<Decoration>)>>,
 }
 
 impl ColorerRegex {
     pub fn new(
         regex: &str,
         default_decorator: Vec<Decoration>,
-        optional_decorator: Option<Vec<(String, Vec<Decoration>)>>,
+        optional_decorators: Option<Vec<(String, Vec<Decoration>)>>,
     ) -> Self {
         Self {
             regex: regex.to_string(),
             default_decorator,
-            optional_decorator,
+            optional_decorators,
         }
     }
 }
 
 pub fn init_parser(command: &str, args: &[String]) -> Option<Arc<Vec<ColorerRegex>>> {
-    // let p = Docker::regexs();
-    // println!("{}", toml::to_string(&p).unwrap());
-    // None
-
-    // TODO (???) spostare qui dentro la creazione e merge di eventuali sottocomandi e non
-    // quindi ritornare un ColorerRegex e non Command
-
     let home = env::var("HOME").unwrap();
     let config = Path::new(&home).join(".config").join("colorer");
     if config.exists() {
@@ -66,7 +59,7 @@ pub fn init_parser(command: &str, args: &[String]) -> Option<Arc<Vec<ColorerRege
             let pattern: Command = toml::from_str(&configs).unwrap();
 
             // TODO check if the loaded configs contains any disabling flag
-            if let Some(values) = pattern.colors {
+            if let Some(values) = pattern.command {
                 return Some(Arc::new(values));
             } else if let Some(values) = pattern.subcommand {
                 if let Some(subcommand) = args.get(2) {
@@ -101,7 +94,7 @@ pub fn reader_handler(line: String, parser: &Arc<Vec<ColorerRegex>>) -> String {
     positions.sort_by_key(|e| e.0);
     positions.into_iter().rev().for_each(|p| {
         let part = &line[p.0 .0..p.0 .1];
-        let decorator = match &p.1.optional_decorator {
+        let decorator = match &p.1.optional_decorators {
             Some(decorators) => {
                 let mut decorator = &p.1.default_decorator;
                 for d in decorators.iter() {
