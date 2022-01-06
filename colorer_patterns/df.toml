@@ -1,0 +1,38 @@
+[[command]]
+regex = "^[^A-Z](\\w+(\\s\\w+)?|\\/\\w+)\\S+"
+default_decorator = ["YellowFg"]
+optional_decorators = [["~\\/\\S+", ["YellowFg"]], ["^(tmp|map\\s)\\S+", ["WhiteFg", "BlackBg"]], ["^[a-zA-Z]\\S+", ["Default"]]]
+
+[[command]]
+regex = "(?<=(\\b(\\d+((\\.|\\,)\\d+)?(\\w+)?\\s+){2}))\\d+((\\.|\\,)\\d+)?([BKMGT](i)?)?(?=(\\s+(\\d+%|-)))"
+default_decorator = ["BlueFg"]
+optional_decorators = [["0", ["RedFg"]]]
+
+[[command]]
+regex = "(?<=(\\b(\\d+((\\.|\\,)\\d+)?(\\w+)?\\s+){3}))\\d+%"
+default_decorator = ["GreenFg"]
+optional_decorators = [["([5-7][0-9])%", ["YellowFg"]], ["([8][0-9]|[9][0-6])%", ["MagentaFg"]], ["([9][7-9]|100)%", ["RedBg"]]]
+
+[[command]]
+regex = "(?<=(%|\\-)\\s+)\\/.*"
+default_decorator = ["CyanFg"]
+
+
+[[command]]
+regex = "^[^A-Z](\\w+(\\s\\w+)?|\\/\\w+)\\S+"
+default_decorator = ["YellowFg"]
+optional_decorators = [["~\\/\\S+", ["YellowFg"]], ["^(tmp|map\\s)\\S+", ["WhiteFg", "BlackBg"]], ["^[a-zA-Z]\\S+", ["Default"]]]
+
+[[command]]
+regex = "(?<=(\\b(\\d+((\\.|\\,)\\d+)?(\\w+)?\\s+){2}))\\d+((\\.|\\,)\\d+)?([BKMGT](i)?)?(?=(\\s+(\\d+%|-)))"
+default_decorator = ["BlueFg"]
+optional_decorators = [["0", ["RedFg"]]]
+
+[[command]]
+regex = "(?<=(\\b(\\d+((\\.|\\,)\\d+)?(\\w+)?\\s+){3}))\\d+%"
+default_decorator = ["GreenFg"]
+optional_decorators = [["([5-7][0-9])%", ["YellowFg"]], ["([8][0-9]|[9][0-6])%", ["MagentaFg"]], ["([9][7-9]|100)%", ["RedBg"]]]
+
+[[command]]
+regex = "(?<=(%|\\-)\\s+)\\/.*"
+default_decorator = ["CyanFg"]

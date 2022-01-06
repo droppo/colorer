@@ -1,0 +1,21 @@
+[[command]]
+regex = "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"
+default_decorator = ["GreenFgBright"]
+
+[[command]]
+regex = "^root"
+default_decorator = ["RedFgBright"]
+
+[[command]]
+regex = "^reboot"
+default_decorator = ["YellowFgBright"]
+
+[[command]]
+regex = "(?<=(\\()).*(?=\\))"
+default_decorator = ["YellowFgBright"]
+optional_decorators = [["00:0[0-9]", ["GreenFgBright"]], ["00:[1-5][0-9]", ["BlackFgBright", "Bold", "YellowFgBright"]], ["\\d+:\\d+", ["Bold", "RedFgBright"]]]
+
+[[command]]
+regex = "still\\slogged\\sin|still\\srunning|down|crash"
+default_decorator = ["CyanFgBright"]
+optional_decorators = [["crash", ["RedBgBright"]]]

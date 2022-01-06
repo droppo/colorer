@@ -1,0 +1,29 @@
+[[command]]
+regex = "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}"
+default_decorator = ["GreenFgBright"]
+
+[[command]]
+regex = "\\d+/[a-zA-Z]+"
+default_decorator = ["YellowFgBright"]
+
+[[command]]
+regex = "(?<=\\d+\\/[a-z]+\\s+)[^\\s]+"
+default_decorator = ["GreenFgBright"]
+optional_decorators = [["closed", ["RedFgBright"]], ["filtered", ["MagentaFgBright"]]]
+
+[[command]]
+regex = "(?<=\\d+\\/[a-z]+\\s+[a-zA-Z]+\\s+)[^\\s]+"
+default_decorator = ["CyanFgBright"]
+
+[[command]]
+regex = "(?<=(\\d+\\/[a-z]+\\s+[a-z]+\\s+\\S+\\s*[^\\S\\r\\n]))\\S.*"
+default_decorator = ["MagentaFgBright"]
+
+[[command]]
+regex = "(?<=(Host is\\s|Host seems\\s))\\w+"
+default_decorator = ["GreenFgBright"]
+optional_decorators = [["down", ["RedFgBright"]]]
+
+[[command]]
+regex = "Nmap scan report for"
+default_decorator = ["Underlined"]

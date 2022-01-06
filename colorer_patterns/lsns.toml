@@ -1,0 +1,15 @@
+[[command]]
+regex = "NS|TYPE|NPROCS|PID|USER|COMMAND"
+default_decorator = ["Underlined"]
+
+[[command]]
+regex = "^\\w+"
+default_decorator = ["YellowFgBright"]
+
+[[command]]
+regex = "root"
+default_decorator = ["RedBgBright"]
+
+[[command]]
+regex = "(?<=^(\\w+\\s+){5}).*"
+default_decorator = ["CyanFgBright"]
