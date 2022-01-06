@@ -61,7 +61,7 @@ fn run_colorer() {
             };
 
             let p_out = p.clone();
-            let p_err = p.clone();
+            let p_err = p;
 
             let stdout_th = thread::spawn(move || {
                 BufReader::new(stdout_child)

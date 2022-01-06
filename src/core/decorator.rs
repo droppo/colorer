@@ -16,7 +16,7 @@ use serde_derive::{Deserialize, Serialize};
 //     };
 // }
 
-pub fn decorate(decorations: &Vec<Decoration>) -> String {
+pub fn decorate(decorations: &[Decoration]) -> String {
     let mut decoration = String::new();
     decorations
         .iter()

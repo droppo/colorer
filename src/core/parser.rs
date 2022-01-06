@@ -1,4 +1,4 @@
-use std::{collections::HashMap, env, fs::File, future::Pending, io::Read, path::Path, sync::Arc};
+use std::{collections::HashMap, env, fs::File, io::Read, path::Path, sync::Arc};
 
 use serde_derive::{Deserialize, Serialize};
 
@@ -12,7 +12,7 @@ pub struct Command {
 }
 
 impl Command {
-    pub fn new(
+    pub fn _new(
         disabling_flags: Option<Vec<String>>,
         subcommand: Option<HashMap<String, Vec<ColorerRegex>>>,
         command: Option<Vec<ColorerRegex>>,
@@ -33,7 +33,7 @@ pub struct ColorerRegex {
 }
 
 impl ColorerRegex {
-    pub fn new(
+    pub fn _new(
         regex: &str,
         default_decorator: Vec<Decoration>,
         optional_decorators: Option<Vec<(String, Vec<Decoration>)>>,
