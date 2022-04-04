@@ -15,7 +15,7 @@ use nix::{
 mod cli_args;
 mod core;
 
-fn run_colorer() {
+fn run() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = env::args().collect();
     if let Some(command) = args.get(1) {
         let mut arguments = vec![];
@@ -94,11 +94,18 @@ fn run_colorer() {
             process::exit(1);
         }
     } else {
-        eprintln!("failed to start colorer: at least one argument is required");
+        eprintln!("At least one argument is required");
+        CliArgs::print_usage();
+        process::exit(1);
     }
+
+    Ok(())
 }
 
 fn main() {
     CliArgs::parse_args();
-    run_colorer();
+    if let Err(err) = run() {
+        eprint!("colorer: {}", err);
+        process::exit(1);
+    }
 }

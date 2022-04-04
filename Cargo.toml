@@ -15,9 +15,11 @@ categories = ["command-line-utilities"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
-name = "clrr"
+name = "colorer"
 path = "src/main.rs"
 
+[profile.release]
+strip = true
 
 [dependencies]
 ctrlc = "3.1.9"
