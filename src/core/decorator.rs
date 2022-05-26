@@ -2,20 +2,6 @@ use std::fmt::Display;
 
 use serde_derive::{Deserialize, Serialize};
 
-// TODO add type checking
-// #[macro_export]
-// macro_rules! decorate {
-//     ($($decoration:expr),*) => {
-//         {
-//             let mut temp_string = String::new();
-//             $(
-//                 temp_string.push_str(format!("{}", $decoration as i32).as_str());
-//             )*
-//             temp_string
-//         }
-//     };
-// }
-
 pub fn decorate(decorations: &[Decoration]) -> String {
     let mut decoration = String::new();
     decorations
