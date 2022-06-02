@@ -17,6 +17,26 @@ categories = ["command-line-utilities"]
 [profile.release]
 strip = true
 
+[package.metadata.deb]
+name = "colorer"
+maintainer = "droppo - github.com/droppo"
+section = "utility"
+assets = [
+       ["target/release/colorer", "usr/bin/", "755"],
+       ["colorer_patterns/df.toml", "etc/colorer/df.toml", "655"],
+       ["colorer_patterns/dig.toml", "etc/colorer/dig.toml", "655"],
+       ["colorer_patterns/docker.toml", "etc/colorer/docker.toml", "655"],
+       ["colorer_patterns/env.toml", "etc/colorer/env.toml", "655"],
+       ["colorer_patterns/free.toml", "etc/colorer/free.toml", "655"],
+       ["colorer_patterns/lastb.toml", "etc/colorer/lastb.toml", "655"],
+       ["colorer_patterns/last.toml", "etc/colorer/last.toml", "655"],
+       ["colorer_patterns/lsns.toml", "etc/colorer/lsns.toml", "655"],
+       ["colorer_patterns/ls.toml", "etc/colorer/ls.toml", "655"],
+       ["colorer_patterns/nmap.toml", "etc/colorer/nmap.toml", "655"],
+       ["colorer_patterns/nslookup.toml", "etc/colorer/nslookup.toml", "655"],
+       ["colorer_patterns/ping.toml", "etc/colorer/ping.toml", "655"]
+]
+
 [dependencies]
 ctrlc = "3.1.9"
 nix = "0.22.0"

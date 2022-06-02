@@ -1,4 +1,4 @@
-use std::{collections::HashMap, env, fs::File, io::Read, path::Path, sync::Arc};
+use std::{collections::HashMap, fs::File, io::Read, path::Path, sync::Arc};
 
 use serde_derive::{Deserialize, Serialize};
 
@@ -50,8 +50,7 @@ pub fn init_parser(
     command: &str,
     args: &[String],
 ) -> Result<Option<Arc<Vec<ColorerRegex>>>, Box<dyn std::error::Error>> {
-    let home = env::var("HOME")?;
-    let config = Path::new(&home).join(".config").join("colorer");
+    let config = Path::new("/etc").join("colorer");
     if config.exists() {
         let config_path = config.join(format!("{}.toml", command));
 

@@ -76,13 +76,6 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         } else {
             Command::new(command).args(&arguments).spawn()?.wait()?;
         }
-        // else if let Ok(mut r) = Command::new(command).args(&arguments).spawn()
-        // {
-        //     r.wait()?;
-        // } else {
-        //     eprintln!("failed to run {}", command);
-        //     process::exit(1);
-        // }
     } else {
         eprintln!("At least one argument is required");
         println!("run colorer --help for help");

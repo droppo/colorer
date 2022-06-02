@@ -31,7 +31,7 @@ Another way to intall this program is to download the binary from the release pa
 
 ## Usage
 
-The program searches for configuration files in `$HOME/.config/colorer`. This repository contains some basic configuration files available in `color_patters` directory.
+The program searches for configuration files in `/etc/colorer`. This repository contains some basic configuration files available in `color_patters` directory.
 
 To use **colorer**, pass the command to be runned as argument, for example:
 ```bash
