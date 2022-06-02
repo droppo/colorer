@@ -1,19 +1,20 @@
 # Colorer
 
-**Colorer** is a simple and extensible text parsing command line utility with the goal af adding color to commands that do not have it by default.
-The command uses user's defined configuration files.
-
 ![Crates.io](https://img.shields.io/crates/v/colorer)
 ![GitHub last commit](https://img.shields.io/github/last-commit/droppo/colorer)
 
+**Colorer** is a simple and extensible text parsing command line utility that is intended to add color to commands that do not have it by default.
+
+The command uses user's defined configuration files.
+
 ## Installation
 
-The most simple way is to install colorer is to by downloading the program from the release page and put it in your path.
+### Installing using Cargo
 
-Another way is to use `cargo`:
+If Rust toolchain is installed, it is possible to install **colorer** by using `cargo`:
 
 ``` bash
-cargo install colorer
+cargo install colorer # from crates.io
 ```
 
 or, after cloning this repository, run:
@@ -21,20 +22,28 @@ or, after cloning this repository, run:
 cargo install --path .
 ```
 
+### Installing from releases
+
+Another way to intall this program is to download the binary from the release page. There are multiple choices:  
+- download the binary and put it in the path  
+- download the package (deb or rpm) and install it. This is the suggested method because it also creates the directory containing the configuration files.
+
+
 ## Usage
 
-The program searches for configuration files in ```$HOME/.config/colorer```. This repository contains some basic configuration files available in `color_patters` directory.
+The program searches for configuration files in `$HOME/.config/colorer`. This repository contains some basic configuration files available in `color_patters` directory.
 
 To use **colorer**, pass the command to be runned as argument, for example:
 ```bash
 colorer df -h
 ```
 
-## Definig new configuration files
-The files used to define a color scheme for a command are simple TOML files. A color scheme contains a `command` vector in which every component contains the following variables:  
+## Define new configuration files
+
+The files used to define a color scheme for a command are simple TOML files named after the commads (e.g. `ls.toml`). A color scheme contains a `command` vector in which every component contains the following variables:  
 - `regex`: the regex used to find the text. This value is mandatory.  
 - `default decorator`: it contains an array of colors. An array is used so it is possible to add a background color, a foreground color as well as a bold, italics. Also this value is mandatory.  
-- `optionals_decorators`: this value is optional and contains an array of alternative values for the string found with the regex. The elements are represented as a tuple where the first value af the tuple contains a regex that searches for a pattern *using the text found by the mandatory regex*, and a list of decorators.  
+- `optionals_decorators`: this value is optional and contains an array of alternative values for the string found with the regex. The elements are represented as a tuple where the first value contains a regex that searches for a pattern **only on what has been found by the mandatory regex**, and a list of decorators.  
 
 
 An example is given by the following snippet defined for `df`. This is used to highlight the usage represented as percentage.
