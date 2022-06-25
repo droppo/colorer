@@ -25,9 +25,8 @@ cargo install --path .
 ### Installing from releases
 
 Another way to intall this program is to download the binary from the release page. There are multiple choices:  
-- download the binary and put it in the path  
-- download the package (deb or rpm) and install it. This is the suggested method because it also creates the directory containing the configuration files.
-
+- download the binary and put it in the path (create the directory containing the color files manually)  
+- download the package (deb or rpm) and install it. This will also create the directory containing the configuration files.
 
 ## Usage
 
@@ -35,12 +34,12 @@ The program searches for configuration files in `/etc/colorer`. This repository 
 
 To use **colorer**, pass the command to be runned as argument, for example:
 ```bash
-colorer df -h
+colorer -- df -h
 ```
 
 ## Define new configuration files
 
-The files used to define a color scheme for a command are simple TOML files named after the commads (e.g. `ls.toml`). A color scheme contains a `command` vector in which every component contains the following variables:  
+The files used to define a color scheme are simple TOML files named after the commads (e.g. `ls.toml`). A color scheme contains a `command` vector in which every component contains the following variables:  
 - `regex`: the regex used to find the text. This value is mandatory.  
 - `default decorator`: it contains an array of colors. An array is used so it is possible to add a background color, a foreground color as well as a bold, italics. Also this value is mandatory.  
 - `optionals_decorators`: this value is optional and contains an array of alternative values for the string found with the regex. The elements are represented as a tuple where the first value contains a regex that searches for a pattern **only on what has been found by the mandatory regex**, and a list of decorators.  
@@ -85,7 +84,7 @@ default_decorator = ["YellowFgBright", "Bold"]
 
 ## Notes
 
-It is always a good idea to use double-dash if **colorer** is used to alias a command.
+It is always a good idea to use double-dash if **colorer** is used to alias a command or when options are used.
 For example, by defining `ll='colorer ls -lahF'`, `ll --help` will print the help message from colorer. This problem can be avoided with `ll='colorer -- ls -lahF'`
 
 ## Screenshots

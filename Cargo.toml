@@ -37,6 +37,25 @@ assets = [
        ["colorer_patterns/ping.toml", "etc/colorer/ping.toml", "655"]
 ]
 
+[package.metadata.rpm]
+package = "colorer"
+cargo = { buildflags = ["--release"] }
+targets = { colorer = { path = "/usr/bin/colorer" } }
+
+[package.metadata.rpm.files]
+"df.toml" = { path = "/etc/colorer/df.toml"  }
+"dig.toml" = { path = "/etc/colorer/dig.toml" }
+"docker.toml" = { path = "/etc/colorer/docker.toml" }
+"env.toml" = { path = "/etc/colorer/env.toml" }
+"free.toml" = { path = "/etc/colorer/free.toml" }
+"lastb.toml" = { path = "/etc/colorer/lastb.toml" }
+"last.toml" = { path = "/etc/colorer/last.toml" }
+"lsns.toml" = { path = "/etc/colorer/lsns.toml" }
+"ls.toml" = { path = "/etc/colorer/ls.toml" }
+"nmap.toml" = { path = "/etc/colorer/nmap.toml" }
+"nslookup.toml" = { path = "/etc/colorer/nslookup.toml" }
+"ping.toml" = { path = "/etc/colorer/ping.toml" }
+
 [dependencies]
 ctrlc = "3.1.9"
 nix = "0.22.0"
