@@ -1,6 +1,6 @@
 [package]
-name = "colorer"
-version = "1.0.0-beta1"
+name = "clrr"
+version = "1.0.0"
 authors = ["droppo"]
 edition = "2021"
 description = "Simple command line utility that add color to commands that do not have it by default."
@@ -18,11 +18,11 @@ categories = ["command-line-utilities"]
 strip = true
 
 [package.metadata.deb]
-name = "colorer"
+name = "clrr"
 maintainer = "droppo - github.com/droppo"
 section = "utility"
 assets = [
-       ["target/release/colorer", "usr/bin/", "755"],
+       ["target/release/clrr", "usr/bin/", "755"],
        ["colorer_patterns/df.toml", "etc/colorer/df.toml", "655"],
        ["colorer_patterns/dig.toml", "etc/colorer/dig.toml", "655"],
        ["colorer_patterns/docker.toml", "etc/colorer/docker.toml", "655"],
@@ -38,9 +38,9 @@ assets = [
 ]
 
 [package.metadata.rpm]
-package = "colorer"
+package = "clrr"
 cargo = { buildflags = ["--release"] }
-targets = { colorer = { path = "/usr/bin/colorer" } }
+targets = { clrr = { path = "/usr/bin/clrr" } }
 
 [package.metadata.rpm.files]
 "df.toml" = { path = "/etc/colorer/df.toml"  }

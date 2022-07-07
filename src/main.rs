@@ -78,7 +78,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         }
     } else {
         eprintln!("At least one argument is required");
-        println!("run colorer --help for help");
+        println!("run clrr --help for help");
         process::exit(1);
     }
 

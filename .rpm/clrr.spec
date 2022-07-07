@@ -2,7 +2,7 @@
 %define __os_install_post %{_dbpath}/brp-compress
 %define debug_package %{nil}
 
-Name: colorer
+Name: clrr
 Summary: Simple command line utility that add color to commands that do not have it by default.
 Version: @@VERSION@@
 Release: @@RELEASE@@%{?dist}

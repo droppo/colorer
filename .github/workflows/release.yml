@@ -29,10 +29,10 @@ jobs:
           script: |
             src=$(pwd)
             stage=$(mktemp -d)
-            cp target/x86_64-unknown-linux-gnu/release/colorer $stage/
+            cp target/x86_64-unknown-linux-gnu/release/clrr $stage/
             cd $stage
             RELEASE_VERSION=${GITHUB_REF#refs/tags/}
-            ASSET_NAME="colorer-$RELEASE_VERSION-x86_64-unknown-linux-gnu.tar.gz"
+            ASSET_NAME="clrr-$RELEASE_VERSION-x86_64-unknown-linux-gnu.tar.gz"
             ASSET_PATH="$src/$ASSET_NAME"
             echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
             tar czf $ASSET_PATH *
@@ -48,10 +48,10 @@ jobs:
           script: |
             src=$(pwd)
             stage=$(mktemp -d)
-            cp target/aarch64-unknown-linux-gnu/release/colorer $stage/
+            cp target/aarch64-unknown-linux-gnu/release/clrr $stage/
             cd $stage
             RELEASE_VERSION=${GITHUB_REF#refs/tags/}
-            ASSET_NAME="colorer-$RELEASE_VERSION-aarch64-unknown-linux-gnu.tar.gz"
+            ASSET_NAME="clrr-$RELEASE_VERSION-aarch64-unknown-linux-gnu.tar.gz"
             ASSET_PATH="$src/$ASSET_NAME"
             echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
             tar czf $ASSET_PATH *
@@ -65,10 +65,10 @@ jobs:
           build_command: "cargo deb --target x86_64-unknown-linux-gnu"
           script: |
             stage=$(mktemp -d)
-            cp target/x86_64-unknown-linux-gnu/debian/colorer*.deb $stage/
+            cp target/x86_64-unknown-linux-gnu/debian/clrr*.deb $stage/
             cd $stage
             RELEASE_VERSION=${GITHUB_REF#refs/tags/}
-            ASSET_NAME="colorer_$(echo $RELEASE_VERSION | sed 's/v//')_amd64.deb"
+            ASSET_NAME="clrr_$(echo $RELEASE_VERSION | sed 's/v//')_amd64.deb"
             ASSET_PATH="$(pwd)/$ASSET_NAME"
             echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
 
@@ -82,10 +82,10 @@ jobs:
           build_command: "cargo deb --target aarch64-unknown-linux-gnu"
           script: |
             stage=$(mktemp -d)
-            cp target/aarch64-unknown-linux-gnu/debian/colorer*.deb $stage/
+            cp target/aarch64-unknown-linux-gnu/debian/clrr*.deb $stage/
             cd $stage
             RELEASE_VERSION=${GITHUB_REF#refs/tags/}
-            ASSET_NAME="colorer_$(echo $RELEASE_VERSION | sed 's/v//')_arm64.deb"
+            ASSET_NAME="clrr_$(echo $RELEASE_VERSION | sed 's/v//')_arm64.deb"
             ASSET_PATH="$(pwd)/$ASSET_NAME"
             echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
 
@@ -98,8 +98,8 @@ jobs:
           build_command: "cp colorer_patterns/* .rpm && cargo rpm build --target x86_64-unknown-linux-gnu"
           script: |
             stage=$(mktemp -d)
-            cp target/x86_64-unknown-linux-gnu/release/rpmbuild/RPMS/x86_64/colorer*.rpm $stage/
-            ASSET_NAME="$(basename $(find target/x86_64-unknown-linux-gnu/release/rpmbuild/RPMS/x86_64/colorer*.rpm))"
+            cp target/x86_64-unknown-linux-gnu/release/rpmbuild/RPMS/x86_64/clrr*.rpm $stage/
+            ASSET_NAME="$(basename $(find target/x86_64-unknown-linux-gnu/release/rpmbuild/RPMS/x86_64/clrr*.rpm))"
             cd $stage
             RELEASE_VERSION=${GITHUB_REF#refs/tags/}
             ASSET_PATH="$(pwd)/$ASSET_NAME"
@@ -115,8 +115,8 @@ jobs:
           build_command: "cp colorer_patterns/* .rpm && cargo rpm build --target aarch64-unknown-linux-gnu"
           script: |
             stage=$(mktemp -d)
-            cp target/aarch64-unknown-linux-gnu/release/rpmbuild/RPMS/aarch64/colorer*.rpm $stage/
-            ASSET_NAME="$(basename $(find target/aarch64-unknown-linux-gnu/release/rpmbuild/RPMS/aarch64/colorer*.rpm))"
+            cp target/aarch64-unknown-linux-gnu/release/rpmbuild/RPMS/aarch64/clrr*.rpm $stage/
+            ASSET_NAME="$(basename $(find target/aarch64-unknown-linux-gnu/release/rpmbuild/RPMS/aarch64/clrr*.rpm))"
             cd $stage
             RELEASE_VERSION=${GITHUB_REF#refs/tags/}
             ASSET_PATH="$(pwd)/$ASSET_NAME"
@@ -131,10 +131,10 @@ jobs:
           script: |
             src=$(pwd)
             stage=$(mktemp -d)
-            cp target/release/colorer $stage/
+            cp target/release/clrr $stage/
             cd $stage
             RELEASE_VERSION=${GITHUB_REF#refs/tags/}
-            ASSET_NAME="colorer-$RELEASE_VERSION-x86_64-apple-darwin.tar.gz"
+            ASSET_NAME="clrr-$RELEASE_VERSION-x86_64-apple-darwin.tar.gz"
             ASSET_PATH="$src/$ASSET_NAME"
             echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
             tar czf $ASSET_PATH *
@@ -148,10 +148,10 @@ jobs:
           script: |
             src=$(pwd)
             stage=$(mktemp -d)
-            cp target/release/colorer $stage/
+            cp target/release/clrr $stage/
             cd $stage
             RELEASE_VERSION=${GITHUB_REF#refs/tags/}
-            ASSET_NAME="colorer-$RELEASE_VERSION-aarch64-apple-darwin.tar.gz"
+            ASSET_NAME="clrr-$RELEASE_VERSION-aarch64-apple-darwin.tar.gz"
             ASSET_PATH="$src/$ASSET_NAME"
             echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
             tar czf $ASSET_PATH *

@@ -114,8 +114,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "colorer"
-version = "1.0.0-beta1"
+name = "clrr"
+version = "1.0.0"
 dependencies = [
  "ctrlc",
  "nix",

@@ -1,3 +1,9 @@
+# 1.0.0
+
+## What's new
+- users' definied color schemes
+- replaced `pico-args` with `structopt`
+
 # 0.3.2
 
 ## What's new
