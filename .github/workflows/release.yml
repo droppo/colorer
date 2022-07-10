@@ -25,64 +25,170 @@ jobs:
           rust: stable
           target: x86_64-unknown-linux-gnu
           cross: false
-        - build: aarch64
+          build_command: cargo build --release --target x86_64-unknown-linux-gnu
+          script: |
+            src=$(pwd)
+            stage=$(mktemp -d)
+            cp target/x86_64-unknown-linux-gnu/release/clrr $stage/
+            cd $stage
+            RELEASE_VERSION=${GITHUB_REF#refs/tags/}
+            ASSET_NAME="clrr-$RELEASE_VERSION-x86_64-unknown-linux-gnu.tar.gz"
+            ASSET_PATH="$src/$ASSET_NAME"
+            echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
+            tar czf $ASSET_PATH *
+
+        - build: linux aarch64
           os: ubuntu-latest
           rust: stable
           target: aarch64-unknown-linux-gnu
-          linker: gcc-aarch64-linux-gnu
+          # linker: gcc-aarch64-linux-gnu
           cross: true
+          dep_command: sudo apt update && sudo apt install -y gcc-aarch64-linux-gnu
+          build_command: "cargo build --release --target aarch64-unknown-linux-gnu"
+          script: |
+            src=$(pwd)
+            stage=$(mktemp -d)
+            cp target/aarch64-unknown-linux-gnu/release/clrr $stage/
+            cd $stage
+            RELEASE_VERSION=${GITHUB_REF#refs/tags/}
+            ASSET_NAME="clrr-$RELEASE_VERSION-aarch64-unknown-linux-gnu.tar.gz"
+            ASSET_PATH="$src/$ASSET_NAME"
+            echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
+            tar czf $ASSET_PATH *
+
+        - build: linux amd64 deb
+          os: ubuntu-latest
+          rust: stable
+          target: x86_64-unknown-linux-gnu
+          cross: false
+          dep_command: cargo install cargo-deb
+          build_command: "cargo deb --target x86_64-unknown-linux-gnu"
+          script: |
+            stage=$(mktemp -d)
+            cp target/x86_64-unknown-linux-gnu/debian/clrr*.deb $stage/
+            cd $stage
+            RELEASE_VERSION=${GITHUB_REF#refs/tags/}
+            ASSET_NAME="clrr_$(echo $RELEASE_VERSION | sed 's/v//')_amd64.deb"
+            ASSET_PATH="$(pwd)/$ASSET_NAME"
+            echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
+
+        - build: linux aarch64 deb
+          os: ubuntu-latest
+          rust: stable
+          target: aarch64-unknown-linux-gnu
+          # linker: gcc-aarch64-linux-gnu
+          cross: true
+          dep_command: sudo apt update && sudo apt install -y gcc-aarch64-linux-gnu && cargo install cargo-deb
+          build_command: "cargo deb --target aarch64-unknown-linux-gnu"
+          script: |
+            stage=$(mktemp -d)
+            cp target/aarch64-unknown-linux-gnu/debian/clrr*.deb $stage/
+            cd $stage
+            RELEASE_VERSION=${GITHUB_REF#refs/tags/}
+            ASSET_NAME="clrr_$(echo $RELEASE_VERSION | sed 's/v//')_arm64.deb"
+            ASSET_PATH="$(pwd)/$ASSET_NAME"
+            echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
+
+        - build: linux amd64 rpm
+          os: ubuntu-latest
+          rust: stable
+          target: x86_64-unknown-linux-gnu
+          cross: false
+          dep_command: sudo apt update && sudo apt install -y rpm && cargo install cargo-rpm
+          build_command: "cp colorer_patterns/* .rpm && cargo rpm build --target x86_64-unknown-linux-gnu"
+          script: |
+            stage=$(mktemp -d)
+            cp target/x86_64-unknown-linux-gnu/release/rpmbuild/RPMS/x86_64/clrr*.rpm $stage/
+            ASSET_NAME="$(basename $(find target/x86_64-unknown-linux-gnu/release/rpmbuild/RPMS/x86_64/clrr*.rpm))"
+            cd $stage
+            RELEASE_VERSION=${GITHUB_REF#refs/tags/}
+            ASSET_PATH="$(pwd)/$ASSET_NAME"
+            echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
+
+        - build: linux aarch64 rpm
+          os: ubuntu-latest
+          rust: stable
+          target: aarch64-unknown-linux-gnu
+          # linker: gcc-aarch64-linux-gnu
+          cross: true
+          dep_command: sudo apt update && sudo apt install -y gcc-aarch64-linux-gnu rpm && cargo install cargo-rpm
+          build_command: "cp colorer_patterns/* .rpm && cargo rpm build --target aarch64-unknown-linux-gnu"
+          script: |
+            stage=$(mktemp -d)
+            cp target/aarch64-unknown-linux-gnu/release/rpmbuild/RPMS/aarch64/clrr*.rpm $stage/
+            ASSET_NAME="$(basename $(find target/aarch64-unknown-linux-gnu/release/rpmbuild/RPMS/aarch64/clrr*.rpm))"
+            cd $stage
+            RELEASE_VERSION=${GITHUB_REF#refs/tags/}
+            ASSET_PATH="$(pwd)/$ASSET_NAME"
+            echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
+
         - build: macos
           os: macos-11
           rust: stable
           target: x86_64-apple-darwin
           cross: false
+          build_command: "cargo build --release"
+          script: |
+            src=$(pwd)
+            stage=$(mktemp -d)
+            cp target/release/clrr $stage/
+            cd $stage
+            RELEASE_VERSION=${GITHUB_REF#refs/tags/}
+            ASSET_NAME="clrr-$RELEASE_VERSION-x86_64-apple-darwin.tar.gz"
+            ASSET_PATH="$src/$ASSET_NAME"
+            echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
+            tar czf $ASSET_PATH *
+
         - build: aarch64 macos
           os: macos-11
           rust: stable
           target: aarch64-apple-darwin
           cross: false
+          build_command: "cargo build --release"
+          script: |
+            src=$(pwd)
+            stage=$(mktemp -d)
+            cp target/release/clrr $stage/
+            cd $stage
+            RELEASE_VERSION=${GITHUB_REF#refs/tags/}
+            ASSET_NAME="clrr-$RELEASE_VERSION-aarch64-apple-darwin.tar.gz"
+            ASSET_PATH="$src/$ASSET_NAME"
+            echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
+            tar czf $ASSET_PATH *
+
     steps:
+
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
-    - name: Install Linker
+
+    - name: Setup Cross Compilation
       if: matrix.cross
       run: |
         if [[ $(uname) == "Linux" ]]
         then
-          sudo apt update
-          sudo apt install ${{ matrix.linker }}
           mkdir .cargo
           echo '[target.aarch64-unknown-linux-gnu]' >> .cargo/config
           echo 'linker = "aarch64-linux-gnu-gcc"' >> .cargo/config
         fi
+
     - name: Install Rust
       run: |
         rustup install ${{ matrix.rust }}
         rustup target add ${{ matrix.target }}
         rustup show
-    - name: Build
-      run: cargo build --release --target ${{ matrix.target }}
-    - name: Package Artifacts
+
+    - name: Install Dependencuies
       run: |
-        src=$(pwd)
-        stage=
-        case $RUNNER_OS in
-            Linux)
-                stage=$(mktemp -d)
-                ;;
-            macOS)
-                stage=$(mktemp -d -t tmp)
-                ;;
-        esac
-        cp target/${{ matrix.target }}/release/clrr $stage/
-        cd $stage
-        RELEASE_VERSION=${GITHUB_REF#refs/tags/}
-        ASSET_NAME="clrr-$RELEASE_VERSION-${{ matrix.target }}.tar.gz"
-        ASSET_PATH="$src/$ASSET_NAME"
-        echo "ASSET_PATH=$ASSET_PATH" >> $GITHUB_ENV
-        tar czf $ASSET_PATH *
+        ${{ matrix.dep_command }}
+
+    - name: Build
+      run: ${{ matrix.build_command }}
+
+    - name: Package Artifacts
+      run: ${{ matrix.script }}
+
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')

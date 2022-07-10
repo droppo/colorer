@@ -1,0 +1,37 @@
+[[command]]
+regex = "\\bMem\\b"
+default_decorator = ["BlueFg"]
+
+[[command]]
+regex = "\\bSwap\\b"
+default_decorator = ["MagentaFg"]
+
+[[command]]
+regex = "(?<=(\\b(Mem|Swap)\\b\\S\\s+))\\S+"
+default_decorator = ["GreenFg"]
+
+[[command]]
+regex = "(?<=(\\b(Mem|Swap)\\b(\\S+\\s+){2}))\\S+"
+default_decorator = ["GreenFg"]
+optional_decorators = [["\\b0(\\w)?", ["GreenBg"]]]
+
+[[command]]
+regex = "(?<=(\\b(Mem|Swap)\\b(\\S+\\s+){3}))\\S+"
+default_decorator = ["GreenFg"]
+optional_decorators = [["\\b0(\\w)?", ["RedBg"]]]
+
+[[command]]
+regex = "(?<=(\\b(Mem|Swap)\\b(\\S+\\s+){4}))\\S+"
+default_decorator = ["GreenFg"]
+
+[[command]]
+regex = "(?<=(\\b(Mem|Swap)\\b(\\S+\\s+){5}))\\S+"
+default_decorator = ["GreenFg"]
+
+[[command]]
+regex = "(?<=(\\b(Mem|Swap)\\b(\\S+\\s+){6}))\\S+(?=\\s+\\w+$)"
+default_decorator = ["GreenFg"]
+
+[[command]]
+regex = "(?<=(\\b(Mem|Swap)\\b(\\S+\\s+){6,7}))\\S+$"
+default_decorator = ["CyanFg"]

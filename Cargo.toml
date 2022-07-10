@@ -1,8 +1,8 @@
 [package]
-name = "colorer"
-version = "0.3.2"
+name = "clrr"
+version = "1.0.0"
 authors = ["droppo"]
-edition = "2018"
+edition = "2021"
 description = "Simple command line utility that add color to commands that do not have it by default."
 documentation = "https://github.com/droppo/colorer"
 repository = "https://github.com/droppo/colorer"
@@ -14,13 +14,54 @@ categories = ["command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[[bin]]
-name = "clrr"
-path = "src/main.rs"
+[profile.release]
+strip = true
 
+[package.metadata.deb]
+name = "clrr"
+maintainer = "droppo - github.com/droppo"
+section = "utility"
+assets = [
+       ["target/release/clrr", "usr/bin/", "755"],
+       ["colorer_patterns/df.toml", "etc/colorer/df.toml", "655"],
+       ["colorer_patterns/dig.toml", "etc/colorer/dig.toml", "655"],
+       ["colorer_patterns/docker.toml", "etc/colorer/docker.toml", "655"],
+       ["colorer_patterns/env.toml", "etc/colorer/env.toml", "655"],
+       ["colorer_patterns/free.toml", "etc/colorer/free.toml", "655"],
+       ["colorer_patterns/lastb.toml", "etc/colorer/lastb.toml", "655"],
+       ["colorer_patterns/last.toml", "etc/colorer/last.toml", "655"],
+       ["colorer_patterns/lsns.toml", "etc/colorer/lsns.toml", "655"],
+       ["colorer_patterns/ls.toml", "etc/colorer/ls.toml", "655"],
+       ["colorer_patterns/nmap.toml", "etc/colorer/nmap.toml", "655"],
+       ["colorer_patterns/nslookup.toml", "etc/colorer/nslookup.toml", "655"],
+       ["colorer_patterns/ping.toml", "etc/colorer/ping.toml", "655"]
+]
+
+[package.metadata.rpm]
+package = "clrr"
+cargo = { buildflags = ["--release"] }
+targets = { clrr = { path = "/usr/bin/clrr" } }
+
+[package.metadata.rpm.files]
+"df.toml" = { path = "/etc/colorer/df.toml"  }
+"dig.toml" = { path = "/etc/colorer/dig.toml" }
+"docker.toml" = { path = "/etc/colorer/docker.toml" }
+"env.toml" = { path = "/etc/colorer/env.toml" }
+"free.toml" = { path = "/etc/colorer/free.toml" }
+"lastb.toml" = { path = "/etc/colorer/lastb.toml" }
+"last.toml" = { path = "/etc/colorer/last.toml" }
+"lsns.toml" = { path = "/etc/colorer/lsns.toml" }
+"ls.toml" = { path = "/etc/colorer/ls.toml" }
+"nmap.toml" = { path = "/etc/colorer/nmap.toml" }
+"nslookup.toml" = { path = "/etc/colorer/nslookup.toml" }
+"ping.toml" = { path = "/etc/colorer/ping.toml" }
 
 [dependencies]
 ctrlc = "3.1.9"
-nix = "0.22.0"
+nix = "0.24.1"
 onig = "6.2.0"
-pico-args = "0.4.2"
+serde = "1.0.133"
+serde_derive = "1.0.133"
+serde_json = "1.0.74"
+structopt = "0.3.26"
+toml = "0.5.8"

@@ -1,0 +1,132 @@
+[[subcommand.container]]
+regex = "(?<=(^(\\S+)\\s+))(\\S+){3,}"
+default_decorator = ["MagentaFgBright"]
+
+[[subcommand.container]]
+regex = "(?<=(^\\S+\\s+\\S+\\s+\\\".*\\\"\\s+))(\\d|\\w+\\s\\w+|\\d+)(\\s\\w+){1,3}"
+default_decorator = ["BlueFgBright"]
+
+[[subcommand.container]]
+regex = "(\\w+\\s(\\d|about a)+\\s\\w+|\\w+\\s\\(\\d+\\)\\s\\d+(\\s\\w+){2})"
+default_decorator = ["GreenFgBright"]
+optional_decorators = [["\\w+\\s\\(\\d+\\)\\s\\d+\\s\\w+\\s\\w+", ["RedBgBright"]]]
+
+[[subcommand.container]]
+regex = "(?<=(\\s|>))\\d+/\\w+"
+default_decorator = ["YellowFgBright"]
+
+[[subcommand.container]]
+regex = "((\\d{1,3}.){3}\\d{1,3}|::):\\d+"
+default_decorator = ["GreenFgBright"]
+
+[[subcommand.container]]
+regex = "\\S+[^NAMES\\n]($|\\n)"
+default_decorator = ["CyanFgBright"]
+
+[[subcommand.ps]]
+regex = "(?<=(^(\\S+)\\s+))(\\S+){3,}"
+default_decorator = ["MagentaFgBright"]
+
+[[subcommand.ps]]
+regex = "(?<=(^\\S+\\s+\\S+\\s+\\\".*\\\"\\s+))(\\d|\\w+\\s\\w+|\\d+)(\\s\\w+){1,3}"
+default_decorator = ["BlueFgBright"]
+
+[[subcommand.ps]]
+regex = "(\\w+\\s(\\d|about a)+\\s\\w+|\\w+\\s\\(\\d+\\)\\s\\d+(\\s\\w+){2})"
+default_decorator = ["GreenFgBright"]
+optional_decorators = [["\\w+\\s\\(\\d+\\)\\s\\d+\\s\\w+\\s\\w+", ["RedBgBright"]]]
+
+[[subcommand.ps]]
+regex = "(?<=(\\s|>))\\d+/\\w+"
+default_decorator = ["YellowFgBright"]
+
+[[subcommand.ps]]
+regex = "((\\d{1,3}.){3}\\d{1,3}|::):\\d+"
+default_decorator = ["GreenFgBright"]
+
+[[subcommand.ps]]
+regex = "\\S+[^NAMES\\n]($|\\n)"
+default_decorator = ["CyanFgBright"]
+
+[[subcommand.stats]]
+regex = "(?<=^\\S+\\s+)\\S+"
+default_decorator = ["MagentaFgBright"]
+optional_decorators = [["ID", ["Default"]]]
+
+[[subcommand.stats]]
+regex = "\\b\\d+(.\\d+)?%"
+default_decorator = ["GreenFgBright"]
+optional_decorators = [["\\b[5-7]\\d(.\\d+)%", ["YellowFgBright"]], ["(\\b[8]\\d|[9][0-6])(.\\d+)%", ["MagentaBgBright"]], ["(\\b[9][7-9]|100)(.\\d+)%", ["RedBgBright"]]]
+
+[[subcommand.stats]]
+regex = "\\d+(.\\d+)?(B|k(i)?B|M(i)?B|G(i)?B)"
+default_decorator = ["RedBgBright"]
+optional_decorators = [["\\d+(.\\d+)?(B|k(i)?B)|[0-4]\\d(.\\d+)?(M(i)?B)", ["GreenFgBright"]], ["[5-9]\\d(\\d)?(.\\d?)(M(i)?B)", ["YellowFgBright"]]]
+
+[[subcommand.stats]]
+regex = "\\d+$"
+default_decorator = ["RedFgBright"]
+optional_decorators = [["[1][0-9]", ["YellowFgBright"]], ["[0-9]", ["GreenFgBright"]]]
+
+[[subcommand.network]]
+regex = "(?<=(^[^NAME]\\S+\\s+))\\S+"
+default_decorator = ["MagentaFgBright"]
+optional_decorators = [["none", ["BlackFgBright"]]]
+
+[[subcommand.network]]
+regex = "(?<=(^[^NAME](\\S+\\s+){2}))\\S+"
+default_decorator = ["CyanFgBright"]
+optional_decorators = [["host", ["CyanFgBright"]], ["bridge", ["BlueFgBright"]], ["null", ["BlackFgBright"]]]
+
+[[subcommand.build]]
+regex = "(?<=(^Step\\s+))\\d+"
+default_decorator = ["YellowFgBright"]
+
+[[subcommand.build]]
+regex = "(?<=(^Step\\s+\\d+\\/))\\d+"
+default_decorator = ["GreenFgBright"]
+
+[[subcommand.build]]
+regex = "\\b(FROM|RUN|LABEL|CMD|ARG|ADD|COPY|ENV|ENTRYPOINT|LABEL|EXPOSE|WORKDIR|VOLUME|HEALTHCHECK|ONBUILD)\\b"
+default_decorator = ["MagentaFg", "Bold"]
+
+[[subcommand.build]]
+regex = "(?<=^Status:\\s+).*"
+default_decorator = ["Bold"]
+
+[[subcommand.build]]
+regex = "--->.*"
+default_decorator = ["BlackFgBright"]
+
+[[subcommand.pull]]
+regex = "(Pulling|Verifying).*"
+default_decorator = ["YellowFgBright"]
+
+[[subcommand.pull]]
+regex = "Waiting"
+default_decorator = ["BlackFgBright"]
+
+[[subcommand.pull]]
+regex = "Download complete"
+default_decorator = ["GreenFgBright"]
+
+[[subcommand.pull]]
+regex = "Pull complete"
+default_decorator = ["GreenBgBright"]
+
+[[subcommand.search]]
+regex = "(^[^NAME]\\w+(?=\\s)|(?<=(^\\w+\\/))\\S+)"
+default_decorator = ["YellowFgBright", "Bold"]
+
+[[subcommand.search]]
+regex = "(?<=\\s)\\d+(?=\\s)"
+default_decorator = ["GreenFgBright"]
+optional_decorators = [["\\d{1}", ["MagentaFgBright"]], ["\\d{2}", ["YellowFgBright"]], ["\\d{3,}", ["GreenFgBright"]]]
+
+[[subcommand.search]]
+regex = "(?<=\\[)OK(?=\\])"
+default_decorator = ["GreenFgBright"]
+
+[[subcommand.search]]
+regex = "(?<=^[^NAME]\\S+\\s)\\s+(?=\\s)"
+default_decorator = ["BlackFgBright", "Underlined"]
