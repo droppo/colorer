@@ -114,7 +114,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "clrr"
+name = "colorer"
 version = "1.0.0"
 dependencies = [
  "ctrlc",
