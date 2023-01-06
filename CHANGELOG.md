@@ -1,3 +1,6 @@
+# 1.1.0
+- if is possible to indicate a custom color schemes using the `file` option
+
 # 1.0.0
 
 ## What's new
