@@ -1,6 +1,9 @@
 use std::{collections::HashMap, fs::File, io::Read, path::Path, sync::Arc};
 
 use serde_derive::{Deserialize, Serialize};
+use structopt::StructOpt;
+
+use crate::cli_args::CliArgs;
 
 use super::decorator::{decorate, Decoration};
 
@@ -9,20 +12,6 @@ pub struct Command {
     disabling_flags: Option<Vec<String>>,
     subcommand: Option<HashMap<String, Vec<ColorerRegex>>>,
     command: Option<Vec<ColorerRegex>>,
-}
-
-impl Command {
-    pub fn _new(
-        disabling_flags: Option<Vec<String>>,
-        subcommand: Option<HashMap<String, Vec<ColorerRegex>>>,
-        command: Option<Vec<ColorerRegex>>,
-    ) -> Self {
-        Self {
-            disabling_flags,
-            subcommand,
-            command,
-        }
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -50,24 +39,26 @@ pub fn init_parser(
     command: &str,
     args: &[String],
 ) -> Result<Option<Arc<Vec<ColorerRegex>>>, Box<dyn std::error::Error>> {
-    let config = Path::new("/etc").join("colorer");
-    if config.exists() {
-        let config_path = config.join(format!("{}.toml", command));
+    let cli = CliArgs::from_args();
+    let colorer_file_path = match cli.file {
+        Some(filepath) => filepath,
+        None => Path::new("/etc")
+            .join("colorer")
+            .join(format!("{}.toml", command)),
+    };
 
-        if config_path.exists() {
-            let mut config_file = File::open(config_path)?;
-            let mut configs = String::new();
-            config_file.read_to_string(&mut configs)?;
-            let pattern: Command = toml::from_str(&configs)?;
+    if colorer_file_path.exists() {
+        let mut config_file = File::open(colorer_file_path)?;
+        let mut configs = String::new();
+        config_file.read_to_string(&mut configs)?;
+        let pattern: Command = toml::from_str(&configs)?;
 
-            // TODO check if the loaded configs contains any disabling flag
-            if let Some(values) = pattern.command {
-                return Ok(Some(Arc::new(values)));
-            } else if let Some(values) = pattern.subcommand {
-                if let Some(subcommand) = args.get(1) {
-                    if let Some(colors) = values.get(subcommand) {
-                        return Ok(Some(Arc::new(colors.to_vec())));
-                    }
+        if let Some(values) = pattern.command {
+            return Ok(Some(Arc::new(values)));
+        } else if let Some(values) = pattern.subcommand {
+            if let Some(subcommand) = args.get(1) {
+                if let Some(colors) = values.get(subcommand) {
+                    return Ok(Some(Arc::new(colors.to_vec())));
                 }
             }
         }
