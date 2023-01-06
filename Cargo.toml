@@ -11,6 +11,7 @@ readme = "README.md"
 license = "MIT"
 keywords = ["cli", "parser", "terminal", "utility", "command"]
 categories = ["command-line-utilities"]
+exclude = [".github", ".rpm", "screenshots"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
